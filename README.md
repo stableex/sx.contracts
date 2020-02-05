@@ -56,7 +56,7 @@ cleos push stablestable setreferral '["myreferral", "0.01 USD", [{"key":"website
 
 Referrals can append their referral account name to the token transfer.
 
-### `schema`
+### `memo` schema
 
 ```bash
 "{symbol_code},{referral_name}"
@@ -65,7 +65,7 @@ Referrals can append their referral account name to the token transfer.
 ### `example`
 
 ```bash
-"USDT,myreferral"
+cleos transfer myaccount stablestable "1.0000 USDT" "USDB,myreferral" --contract tethertether
 ```
 
 ### Step 2-B (include `signup` action)
