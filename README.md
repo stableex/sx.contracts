@@ -28,7 +28,7 @@ SX is a liquidity exchange that strictly supports only highly available stable t
 
 Send any of the supported stable token asset to the smart contract (`stablestable`) and include in the memo which asset you would like in return by providing the token `symbol_code` (ex: "`USDT`").
 
-```
+```bash
 $ cleos transfer myaccount stablestable "1.0000 USDT" "EOSDT" --contract tethertether
 ```
 
@@ -59,7 +59,7 @@ Referrals can append their referral account name to the token transfer.
 ### `schema`
 
 ```bash
-"{symbol_code},{optional<name>}"
+"{symbol_code},{referral_name}"
 ```
 
 ### `example`
