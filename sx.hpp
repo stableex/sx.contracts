@@ -5,9 +5,6 @@
 #include <eosio/singleton.hpp>
 #include <eosio/asset.hpp>
 
-#include <eosio.token/eosio.token.hpp>
-#include <delphioracle/delphioracle.hpp>
-
 #include <math.h>
 #include <string>
 
