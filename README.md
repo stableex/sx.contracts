@@ -4,11 +4,13 @@
 
 ## USDⓈ pairs
 
-| symbol  | name          | website                  |
-|---------|---------------|--------------------------|
-| USDT    | Tether        | https://tether.to        |
-| EOSDT   | Equilibrium   | https://eosdt.com        |
-| EOS     | EOS           | https://eos.io           |
+| symbol  | name          | website                   |
+|---------|---------------|---------------------------|
+| EOS     | EOS           | https://eos.io            |
+| USDT    | Tether        | https://tether.to         |
+| EOSDT   | Equilibrium   | https://eosdt.com         |
+| USDE    | Pizza USDEOS  | https://pizza.live        |
+| EBTC    | BitPie BTC    | https://eosstablecoin.com |
 
 # Table of Contents
 
