@@ -7,6 +7,9 @@ node_modules
 package-lock.json
 .lamington
 
+*.wasm
+*.abi
+
 # Prerequisites
 *.d
 
