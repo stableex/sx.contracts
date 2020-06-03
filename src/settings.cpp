@@ -24,12 +24,15 @@ void stable::token( const symbol_code symcode, const optional<name> contract, co
         // validate contract
         check( contract->value, "contract is required");
         const asset supply = token::get_supply( *contract, symcode );
+        const asset balance = token::get_balance( *contract, get_self(), symcode );
         if ( contract ) check( supply.amount > 0, "invalid supply");
 
         _tokens.emplace( get_self(), [&]( auto& row ){
             row.sym = supply.symbol;
             row.contract = *contract;
             row.active = active;
+            row.balance = balance;
+            row.depth = balance;
         });
     } else {
         // modify

@@ -20,11 +20,14 @@ nodeos -p eosio -e \
   --verbose-http-errors \
   --disable-replay-opts \
   --delete-all-blocks \
+  --producer-name mybp1 \
+  --producer-name mybp2 \
+  --producer-name mybp3 \
+  --producer-name mybp4 \
+  --producer-name mybp5 \
+  --producer-name eosio \
   --contracts-console \
   --filter-on=* \
   --filter-out=eosio:onblock: \
   --trace-history \
   --chain-state-history 2>stderr &
-
-sleep 1
-curl -X POST http://127.0.0.1:8888/v1/producer/schedule_protocol_feature_activations -d '{"protocol_features_to_activate": ["0ec7e080177b2c02b278d5088611686b49d739925a92d9bfcacd7fc6b74053bd"]}' | jq

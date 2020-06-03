@@ -11,7 +11,7 @@
 using namespace eosio;
 using namespace std;
 
-class [[eosio::contract]] stable : public contract {
+class [[eosio::contract("stable.sx")]] stable : public contract {
 public:
     using contract::contract;
 
