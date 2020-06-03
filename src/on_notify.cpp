@@ -13,8 +13,13 @@ void stable::on_transfer( const name from, const name to, const asset quantity, 
         "eosio.rex"_n,
         "eosio"_n,
     };
+
+    // add/remove liquidity depth
+    if ( from == "sx"_n ) return add_depth( quantity );
+    if ( to == "sx"_n ) return sub_depth( quantity );
+
+    // ignore transfers
     if ( to != get_self() ) return;
-    if ( memo == get_self().to_string() ) return;
     if ( ignore.find( from ) != ignore.end() ) return;
 
     // check if contract maintenance is ongoing
@@ -27,21 +32,22 @@ void stable::on_transfer( const name from, const name to, const asset quantity, 
     check_is_active( in_symcode, get_first_receiver() );
     check_is_active( out_symcode, name{} );
     check( in_symcode != out_symcode, in_symcode.to_string() + " symbol code cannot be the same as quantity");
-    check_max_ratio( quantity );
-
-    // get current balances
-    const asset base = stable::get_balance( in_symcode ) - quantity;
-    const asset quote = stable::get_balance( out_symcode );
+    check_max_ratio( in_symcode );
 
     // calculate rates
     const asset fee = calculate_fee( quantity );
-    const asset out = double_to_asset( calculate_out( quantity - fee, base, quote ), quote.symbol );
+    const asset out = double_to_asset( calculate_out( quantity - fee, out_symcode ), get_symbol( out_symcode ) );
 
     // validate output
     check_min_ratio( out );
     check( out.amount > 0, "quantity must be higher");
 
-    // send transfer
-    token::transfer_action transfer( get_contract( out_symcode ), { get_self(), "active"_n });
-    transfer.send( get_self(), from, out, "convert" );
+    // send transfers
+    self_transfer( from, out, "convert" );
+    self_transfer( "fee.sx"_n, fee, "fee" );
+
+    // post transfer
+    update_volume( vector<asset>{ quantity, out }, fee );
+    set_balance( asset{ 0, quantity.symbol } );
+    set_balance( -out );
 }

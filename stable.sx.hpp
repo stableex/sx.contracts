@@ -19,29 +19,20 @@ public:
      * ## TABLE `settings`
      *
      * - `{int64_t} fee` - trading fee (pips 1/100 of 1%)
-     * - `{set<symbol_code>} spot_prices` - symbols for spot price calculations
      * - `{int64_t} amplifier` - liquidity pool amplifier
-     * - `{extended_symbol} pool` - pool token ownership
      *
      * ### example
      *
      * ```json
      * {
-     *   "fee": 10,
-     *   "spot_prices": ["EOS"],
-     *   "amplifier": 20,
-     *   "pool": {
-     *       "contract":"token.sx",
-     *       "symbol": "4,SXS"
-     *    }
+     *   "fee": 20,
+     *   "amplifier": 100
      * }
      * ```
      */
     struct [[eosio::table("settings")]] params {
-        int64_t             fee = 10;
-        set<symbol_code>    spot_prices = set<symbol_code>{symbol_code{"USDT"}};
-        int64_t             amplifier = 20;
-        extended_symbol     pool;
+        int64_t             fee;
+        int64_t             amplifier;
     };
     typedef eosio::singleton< "settings"_n, params > settings;
 
@@ -52,9 +43,6 @@ public:
      * - `{contract} contract` - token contract account name
      * - `{asset} balance` - current balance
      * - `{asset} depth` - liquidity depth
-     * - `{uint64_t} [ratio=10000]` - ratio between balance & depth (pips 1/100 of 1%)
-     * - `{bool} [active=false]` - (true/false) active token allowed to swap
-     * - `{map<symbol_code, double>} spot_prices` - spot prices
      *
      * ### example
      *
@@ -63,12 +51,7 @@ public:
      *     "sym": "4,USDT",
      *     "contract": "tethertether",
      *     "balance": "10000.0000 USDT",
-     *     "depth": "10000.0000 USDT",
-     *     "ratio": 10000,
-     *     "active": true,
-     *     "spot_prices": [
-     *         {"key": "EOSDT", "value": 1.001}
-     *     ]
+     *     "depth": "10000.0000 USDT"
      * }
      * ```
      */
@@ -77,13 +60,40 @@ public:
         name                        contract;
         asset                       balance;
         asset                       depth;
-        int64_t                     ratio;
-        bool                        active;
-        map<symbol_code, double>    spot_prices;
 
         uint64_t primary_key() const { return sym.code().raw(); }
     };
     typedef eosio::multi_index< "tokens"_n, tokens_row > tokens;
+
+    /**
+     * ## TABLE `volume`
+     *
+     * - `{time_point_sec} timestamp` - daily periods (86400 seconds)
+     * - `{map<symbol_code, asset>} fees` - total fees collected
+     * - `{map<symbol_code, asset>} volume` - total trading volume of assets
+     *
+     * ### example
+     *
+     * ```json
+     * {
+     *   "timestamp": "2020-06-03T00:00:00",
+     *   "volume": [
+     *     {"key": "EOSDT", "value": "25.000000000 EOSDT"},
+     *     {"key": "USDT", "value": "100.0000 USDT"}
+     *   ],
+     *   "fees": [
+     *     {"key": "EOSDT", "value": "0.100000000 EOSDT"},
+     *     {"key": "USDT", "value": "0.4000 USDT"}
+     *   ]
+     * }
+     * ```
+     */
+    struct [[eosio::table("volume")]] volume_params {
+        time_point_sec             timestamp;
+        map<symbol_code, asset>    volume;
+        map<symbol_code, asset>    fees;
+    };
+    typedef eosio::singleton< "volume"_n, volume_params > volume_singleton;
 
     /**
      * ## ACTION `setparams`
@@ -99,11 +109,7 @@ public:
      * ### example
      *
      * ```bash
-     * cleos push action swap.sx setparams '[{
-     *     "fee": 10,
-     *     "amplifier": 20,
-     *     "pool": {"contract": "token.sx", "symbol": "4,SXS"}
-     * }]' -p stable.sx
+     * cleos push action swap.sx setparams '[{"fee": 10, "amplifier": 20}]' -p stable.sx
      * ```
      */
     [[eosio::action]]
@@ -120,16 +126,15 @@ public:
      *
      * - `{symbol_code} symcode` - token symbol code
      * - `{name} [contract=null]` - token contract account name (if `null` delete symbol)
-     * - `{bool} [active=false]` - (true/false) active token allowed to swap
      *
      * ### example
      *
      * ```bash
-     * cleos push action swap.sx token '["USDT", "tethertether", true]' -p swap.sx
+     * cleos push action swap.sx token '["USDT", "tethertether"]' -p swap.sx
      * ```
      */
     [[eosio::action]]
-    void token( const symbol_code symcode, const optional<name> contract, const bool active );
+    void token( const symbol_code symcode, const optional<name> contract );
 
     /**
      * Notify contract when any token transfer notifiers relay contract
@@ -149,20 +154,28 @@ private:
     symbol_code parse_memo_symcode( const string memo );
     double asset_to_double( const asset quantity );
     asset double_to_asset( const double amount, const symbol sym );
+    void self_transfer( const name to, const asset quantity, const string memo );
 
     // convert
-    double calculate_out( const asset quantity, const asset base, const asset quote );
+    double calculate_out( const asset quantity, const symbol_code out_symcode );
     asset calculate_fee( const asset quantity );
 
     // tokens
-    void add_depth( const asset value );
-    void sub_depth( const asset value );
-    double get_ratio( const symbol_code symcode );
+    void set_balance( const asset addition );
+    void add_depth( const asset quantity );
+    void sub_depth( const asset quantity );
+
     void check_is_active( const symbol_code symcode, const name contract );
-    void check_max_ratio( const asset quantity );
+    void check_max_ratio( const symbol_code symcode );
     void check_min_ratio( const asset out );
+
+    double get_ratio( const symbol_code symcode );
     name get_contract( const symbol_code symcode );
     symbol get_symbol( const symbol_code symcode );
     asset get_balance( const symbol_code symcode );
     extended_symbol get_extended_symbol( const symbol_code symcode );
+    asset get_depth( const symbol_code symcode );
+
+    // volume
+    void update_volume( const vector<asset> volumes, const asset fee );
 };

@@ -24,3 +24,9 @@ asset stable::double_to_asset( const double amount, const symbol sym )
 {
     return asset{ static_cast<int64_t>(amount * pow(10, sym.precision())), sym };
 }
+
+void stable::self_transfer( const name to, const asset quantity, const string memo )
+{
+    token::transfer_action transfer( get_contract( quantity.symbol.code() ), { get_self(), "active"_n });
+    transfer.send( get_self(), to, quantity, memo );
+}
