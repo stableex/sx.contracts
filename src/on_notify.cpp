@@ -17,6 +17,7 @@ void stable::on_transfer( const name from, const name to, const asset quantity, 
     // add/remove liquidity depth
     if ( from == "sx"_n ) return add_depth( quantity );
     if ( to == "sx"_n ) return sub_depth( quantity );
+    if ( from == get_self() ) check( memo == "convert" || memo == "fee", "invalid transfer");
 
     // ignore transfers
     if ( to != get_self() ) return;
