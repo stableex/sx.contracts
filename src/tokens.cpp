@@ -1,11 +1,11 @@
-void stable::set_balance( const asset addition )
+void stable::set_balance( const symbol_code symcode )
 {
     stable::tokens _tokens( get_self(), get_self().value );
-    auto itr = _tokens.find( addition.symbol.code().raw() );
+    auto itr = _tokens.find( symcode.raw() );
     if ( itr == _tokens.end() ) return;
 
     _tokens.modify( itr, same_payer, [&]( auto & row ) {
-        row.balance = stable::get_balance( addition.symbol.code() ) + addition;
+        row.balance = stable::get_balance( symcode );
     });
 }
 

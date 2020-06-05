@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # settings
-cleos push action stable.sx setparams '[{"fee": 20, "amplifier": 20}]' -p stable.sx
+cleos push action stable.sx setparams '[{"fee": 30, "amplifier": 20}]' -p stable.sx
 
 # add initial liquidity (added manually by including ignored memo)
 cleos transfer sx stable.sx "250.0000 USDT" ""

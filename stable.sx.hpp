@@ -137,6 +137,28 @@ public:
     void token( const symbol_code symcode, const optional<name> contract );
 
     /**
+     * ## ACTION `receipt`
+     *
+     * Receipt of transaction
+     *
+     * - **authority**: `get_self()`
+     *
+     * ### params
+     *
+     * - `{name} owner` - owner account
+     * - `{name} action` - receipt action ("convert")
+     * - `{list<asset>} assets` - assets involved in receipt
+     *
+     * ### example
+     *
+     * ```bash
+     * cleos push action stable.sx receipt '["myaccount", "convert", ["1.0000 EOS", "2.7200 USDT"]]' -p stable.sx
+     * ```
+     */
+    [[eosio::action]]
+    void receipt( const name owner, const name action, const list<asset> assets );
+
+    /**
      * Notify contract when any token transfer notifiers relay contract
      */
     [[eosio::on_notify("*::transfer")]]
@@ -148,6 +170,7 @@ public:
     // action wrappers
     using setparams_action = eosio::action_wrapper<"setparams"_n, &stable::setparams>;
     using token_action = eosio::action_wrapper<"token"_n, &stable::token>;
+    using receipt_action = eosio::action_wrapper<"receipt"_n, &stable::receipt>;
 
 private:
     // utils
@@ -161,7 +184,7 @@ private:
     asset calculate_fee( const asset quantity );
 
     // tokens
-    void set_balance( const asset addition );
+    void set_balance( const symbol_code symcode );
     void add_depth( const asset quantity );
     void sub_depth( const asset quantity );
 
@@ -178,4 +201,7 @@ private:
 
     // volume
     void update_volume( const vector<asset> volumes, const asset fee );
+
+    // receipt
+    void send_receipt( const name owner, const name action, const list<asset> assets );
 };

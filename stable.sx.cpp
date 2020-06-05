@@ -7,3 +7,4 @@
 #include "src/utils.cpp"
 #include "src/convert.cpp"
 #include "src/volume.cpp"
+#include "src/receipt.cpp"

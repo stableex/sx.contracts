@@ -23,7 +23,10 @@ void stable::token( const symbol_code symcode, const optional<name> contract )
     auto itr = _tokens.find( symcode.raw() );
 
     // delete if contract is null
-    if ( itr != _tokens.end() && contract->value == 0 ) _tokens.erase( itr );
+    if ( itr != _tokens.end() && contract->value == 0 ) {
+        _tokens.erase( itr );
+        return;
+    }
 
     check( itr == _tokens.end(), "token already exists");
 

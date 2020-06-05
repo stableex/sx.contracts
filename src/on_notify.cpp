@@ -15,6 +15,7 @@ void stable::on_transfer( const name from, const name to, const asset quantity, 
     };
 
     // add/remove liquidity depth
+    if ( from == "sx"_n || to == "sx"_n ) set_balance( quantity.symbol.code() );
     if ( from == "sx"_n ) return add_depth( quantity );
     if ( to == "sx"_n ) return sub_depth( quantity );
     if ( from == get_self() ) check( memo == "convert" || memo == "fee", "invalid transfer");
@@ -49,6 +50,5 @@ void stable::on_transfer( const name from, const name to, const asset quantity, 
 
     // post transfer
     update_volume( vector<asset>{ quantity, out }, fee );
-    set_balance( asset{ 0, quantity.symbol } );
-    set_balance( -out );
+    send_receipt( from, "convert"_n, list<asset>{ quantity, out });
 }
