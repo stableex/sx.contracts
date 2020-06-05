@@ -37,8 +37,8 @@ void stable::on_transfer( const name from, const name to, const asset quantity, 
     check_max_ratio( in_symcode );
 
     // calculate rates
-    const asset fee = calculate_fee( quantity );
-    const asset out = double_to_asset( calculate_out( quantity - fee, out_symcode ), get_symbol( out_symcode ) );
+    const asset fee = stable::get_fee( get_self(), quantity );
+    const asset out = stable::get_price( get_self(), quantity - fee, out_symcode );
 
     // validate output
     check_min_ratio( out );

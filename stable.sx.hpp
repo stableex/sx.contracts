@@ -167,6 +167,69 @@ public:
                       const asset      quantity,
                       const string     memo );
 
+    /**
+     * ## STATIC `get_rate`
+     *
+     * Get calculated rate (includes fee)
+     *
+     * ### params
+     *
+     * - `{name} contract` - contract account
+     * - `{asset} quantity` - input quantity
+     * - `{symbol_code} symcode` - out symbol code
+     *
+     * ### example
+     *
+     * ```c++
+     * const asset quantity = asset{10000, symbol{"USDT", 4}};
+     * const symbol_code symcode = symbol_code{"EOSDT"};
+     * const asset rate = get_rate( "stable.sx"_n, quantity, symcode );
+     * //=> "1.002990000 EOSDT"
+     * ```
+     */
+    static asset get_rate( const name contract, const asset quantity, const symbol_code symcode )
+    {
+        const asset fee = get_fee( contract, quantity );
+        return get_price( contract, quantity - fee, symcode );
+    }
+
+    /**
+     * ## STATIC `get_fee`
+     *
+     * Get calculated rate (includes fee)
+     *
+     * ### params
+     *
+     * - `{name} contract` - contract account
+     * - `{asset} quantity` - input quantity
+     *
+     * ### example
+     *
+     * ```c++
+     * const asset quantity = asset{10000, symbol{"USDT", 4}};
+     * const asset rate = get_fee( "stable.sx"_n, quantity );
+     * //=> "0.0004 USDT"
+     * ```
+     */
+    static asset get_fee( const name contract, const asset quantity );
+
+    // convert
+    static vector<double> get_uppers( const name contract, const symbol_code base, const symbol_code quote );
+    static asset get_price( const name contract, const asset quantity, const symbol_code symcode );
+
+    // utils
+    static double asset_to_double( const asset quantity );
+    static asset double_to_asset( const double amount, const symbol sym );
+
+    // bancor
+    static double get_bancor_output( const double base_reserve, const double quote_reserve, const double quantity );
+    static double get_bancor_input( const double quote_reserve, const double base_reserve, const double out );
+
+    // tokens
+    static name get_contract( const name contract, const symbol_code symcode );
+    static symbol get_symbol( const name contract, const symbol_code symcode );
+    static extended_symbol get_extended_symbol( const name contract, const symbol_code symcode );
+
     // action wrappers
     using setparams_action = eosio::action_wrapper<"setparams"_n, &stable::setparams>;
     using token_action = eosio::action_wrapper<"token"_n, &stable::token>;
@@ -175,13 +238,7 @@ public:
 private:
     // utils
     symbol_code parse_memo_symcode( const string memo );
-    double asset_to_double( const asset quantity );
-    asset double_to_asset( const double amount, const symbol sym );
     void self_transfer( const name to, const asset quantity, const string memo );
-
-    // convert
-    double calculate_out( const asset quantity, const symbol_code out_symcode );
-    asset calculate_fee( const asset quantity );
 
     // tokens
     void set_balance( const symbol_code symcode );
@@ -193,10 +250,7 @@ private:
     void check_min_ratio( const asset out );
 
     double get_ratio( const symbol_code symcode );
-    name get_contract( const symbol_code symcode );
-    symbol get_symbol( const symbol_code symcode );
     asset get_balance( const symbol_code symcode );
-    extended_symbol get_extended_symbol( const symbol_code symcode );
     asset get_depth( const symbol_code symcode );
 
     // volume

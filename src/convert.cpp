@@ -1,36 +1,47 @@
-double stable::calculate_out( const asset quantity, const symbol_code out_symcode )
+vector<double> stable::get_uppers( const name contract, const symbol_code base_symcode, const symbol_code quote_symcode )
 {
     // settings
-    stable::settings _settings( get_self(), get_self().value );
-    int64_t amplifier = _settings.get().amplifier;
-
-    // input
-    const double in_amount = asset_to_double( quantity );
-
-    // balances
-    const double base = asset_to_double( get_balance( quantity.symbol.code() ) - quantity );
-    const double quote = asset_to_double( get_balance( out_symcode ) );
+    stable::settings _settings( contract, contract.value );
+    stable::tokens _tokens( contract, contract.value );
+    const tokens_row base = _tokens.get( base_symcode.raw(), "base symbol code does not exists" );
+    const tokens_row quote = _tokens.get( quote_symcode.raw(), "quote symbol code does not exists" );
+    const int64_t amplifier = _settings.get().amplifier;
 
     // depth
-    const double base_depth = asset_to_double( get_depth( quantity.symbol.code() ) );
-    const double quote_depth = asset_to_double( get_depth( out_symcode ) );
+    const double base_depth = stable::asset_to_double( base.depth );
+    const double quote_depth = asset_to_double( quote.depth );
 
     // ratio
-    const double base_ratio = base / base_depth;
-    const double quote_ratio = quote / quote_depth;
+    const double base_ratio = static_cast<double>(base.balance.amount) / base.depth.amount;
+    const double quote_ratio = static_cast<double>(quote.balance.amount) / quote.depth.amount;
 
     // upper
     const double base_upper = ( amplifier * base_depth - base_depth + (base_depth * base_ratio));
     const double quote_upper = ( amplifier * quote_depth - quote_depth + (quote_depth * quote_ratio));
 
-    // Bancor V1 Formula
-    return in_amount / ( base_upper + in_amount ) * quote_upper;
+    return vector<double>{ base_upper, quote_upper };
 }
 
-asset stable::calculate_fee( const asset quantity )
+asset stable::get_price( const name contract, const asset quantity, const symbol_code symcode )
+{
+    // quantity input
+    const double in_amount = asset_to_double( quantity );
+
+    // upper limits
+    const vector<double> uppers = get_uppers( contract, quantity.symbol.code(), symcode );
+    const double base_upper = uppers[0];
+    const double quote_upper = uppers[1];
+
+    // Bancor V1 Formula
+    const double out = get_bancor_output( base_upper, quote_upper, in_amount );
+
+    return double_to_asset( out, get_symbol( contract, symcode ));
+}
+
+asset stable::get_fee( const name contract, const asset quantity )
 {
     // settings
-    stable::settings _settings( get_self(), get_self().value );
+    stable::settings _settings( contract, contract.value );
     const int64_t fee = _settings.get().fee;
 
     // fee colleceted from incoming transfer (in basis points 1/100 of 1% )

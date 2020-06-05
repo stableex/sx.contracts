@@ -1,3 +1,29 @@
+// @static
+name stable::get_contract( const name contract, const symbol_code symcode )
+{
+    return get_extended_symbol( contract, symcode ).get_contract();
+}
+
+// @static
+symbol stable::get_symbol( const name contract, const symbol_code symcode )
+{
+    return get_extended_symbol( contract, symcode ).get_symbol();
+}
+
+// @static
+extended_symbol stable::get_extended_symbol( const name contract, const symbol_code symcode )
+{
+    stable::tokens _tokens( contract, contract.value );
+    auto token = _tokens.find( symcode.raw() );
+    check( token != _tokens.end(), symcode.to_string() + " cannot find token");
+    return extended_symbol{ token->sym, token->contract };
+}
+
+asset stable::get_balance( const symbol_code symcode )
+{
+    return token::get_balance( stable::get_contract( get_self(), symcode ), get_self(), symcode );
+}
+
 void stable::set_balance( const symbol_code symcode )
 {
     stable::tokens _tokens( get_self(), get_self().value );
@@ -30,29 +56,6 @@ void stable::sub_depth( const asset quantity )
         row.depth -= quantity;
         check(row.depth.amount >= 0, "depth overdrawn balance");
     });
-}
-
-name stable::get_contract( const symbol_code symcode )
-{
-    return get_extended_symbol( symcode ).get_contract();
-}
-
-symbol stable::get_symbol( const symbol_code symcode )
-{
-    return get_extended_symbol( symcode ).get_symbol();
-}
-
-asset stable::get_balance( const symbol_code symcode )
-{
-    return token::get_balance( get_contract( symcode ), get_self(), symcode );
-}
-
-extended_symbol stable::get_extended_symbol( const symbol_code symcode )
-{
-    stable::tokens _tokens( get_self(), get_self().value );
-    auto token = _tokens.find( symcode.raw() );
-    check( token != _tokens.end(), symcode.to_string() + " cannot find token");
-    return extended_symbol{ token->sym, token->contract };
 }
 
 double stable::get_ratio( const symbol_code symcode )
