@@ -28,3 +28,9 @@ cleos push action eosio.token create '["eosio", "100000000.000000000 EOSDT"]' -p
 cleos push action eosio.token issue '["eosio", "50000000.000000000 EOSDT", "init"]' -p eosio
 cleos transfer eosio myaccount "50000.000000000 EOSDT" "init"
 cleos transfer eosio sx "50000.000000000 EOSDT" "init"
+
+# create EOS token
+cleos push action eosio.token create '["eosio", "100000000.0000 EOS"]' -p eosio.token
+cleos push action eosio.token issue '["eosio", "5000000.0000 EOS", "init"]' -p eosio
+cleos transfer eosio myaccount "50000.0000 EOS" "init"
+cleos transfer eosio sx "50000.0000 EOS" "init"
