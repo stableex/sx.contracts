@@ -1,8 +1,8 @@
-# `stable.sx`
+# `swap.sx`
 
-> Liquidity Exchange using virtual reserves to amplify liquidity pool depth.
+> SX Liquidity Exchange using virtual reserves to amplify liquidity pool depth.
 
-## USDⓈ tokens
+## Supported Tokens
 
 | symbol  | name          | website                   |
 |---------|---------------|---------------------------|
@@ -11,25 +11,53 @@
 | USDB    | Bancor        | https://usdb.peg.network  |
 | USDE	  | Pizza	      | https://pizza.live        |
 
-## Smart Contract
+## Trading Pairs
 
-| chain | contract       | amplifier | pairs                   |
-|-------|----------------|-----------|-------------------------|
-| EOS   | `stable.sx`    | 20        | USDT, EOSDT, USDB, USDE |
-| EOS   | `eosdt.sx`     | 100       | USDT, EOSDT             |
-| EOS   | `swap.sx`      | 3         | EOS, USDT, DAPP, BNT    |
-| EOS   | `stablestable` | 20        | USDT, EOSDT, USDB, USDE |
+| **Exchange**   | **Tokens**                         |
+|----------------|------------------------------------|
+| `swap.sx`      | EOS, USDT, DAPP, BNT, BOID, DICE   |
+| `stable.sx`    | EOS, USDT, EOSDT, USDB, USDE       |
+| `eosdt.sx`     | EOS, USDT, EOSDT                   |
 
 ## Quickstart
 
+### 1. Transfer supported token with `memo`
+
 ```bash
-cleos transfer myaccount stable.sx "1.0000 EOS" "USDT"
+cleos transfer myaccount swap.sx "1.0000 EOS" "USDT"
 ```
 
-## Build
+### 2. [`sx.js`](https://github.com/stableex/sx.js) Javascript library
 
-```bash
-$ eosio-cpp stable.sx.cpp -I include
+```js
+import { JsonRpc } from 'eosjs';
+import { get_tokens, get_settings, get_rate } from "sxjs";
+
+(async () => {
+    // nodeos
+    const rpc = new JsonRpc("https://eos.eosn.io", { fetch: require('node-fetch') });
+
+    // settings (HTTP request)
+    const code = "swap.sx";
+    const tokens = await get_tokens( rpc, code );
+    const settings = await get_settings( rpc, code );
+
+    // calculate price
+    const quantity = "1.0000 EOS";
+    const symcode = "USDT";
+    const { rate } = get_rate( quantity, symcode, tokens, settings );
+
+    // rate: 2.7712 USDT
+})();
+```
+
+### 3. `get_rate` EOSIO smart contract
+
+```c++
+const asset quantity = asset{10000, symbol{"EOS", 4}};
+const symbol_code symcode = symbol_code{"USDT"};
+const asset rate = swap::get_rate( "swap.sx"_n, quantity, symcode );
+//=> "2.7712 USDT"
 ```
 
 ## API

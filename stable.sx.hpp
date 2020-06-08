@@ -37,6 +37,24 @@ public:
     typedef eosio::singleton< "settings"_n, params > settings;
 
     /**
+     * ## TABLE `docs`
+     *
+     * - `{string} url` - Documentation url
+     *
+     * ### example
+     *
+     * ```json
+     * {
+     *   "url": "https://github.com/stableex/sx.swap"
+     * }
+     * ```
+     */
+    struct [[eosio::table("docs")]] docs_row {
+        string      url = "https://github.com/stableex/sx.swap";
+    };
+    typedef eosio::singleton< "docs"_n, docs_row > docs_singleton;
+
+    /**
      * ## TABLE `tokens`
      *
      * - `{symbol} sym` -  token symbol
