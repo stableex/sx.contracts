@@ -4,20 +4,24 @@
 
 ## Supported Tokens
 
-| symbol  | name          | website                   |
-|---------|---------------|---------------------------|
-| USDT    | Tether        | https://tether.to         |
-| EOSDT   | Equilibrium   | https://eosdt.com         |
-| USDB    | Bancor        | https://usdb.peg.network  |
-| USDE	  | Pizza	      | https://pizza.live        |
+| symbol              | website                     |
+|---------------------|-----------------------------|
+| USDT (Tether)       | https://tether.to           |
+| EOSDT (Equilibrium) | https://eosdt.com           |
+| USDB (Bancor)       | https://usdb.peg.network    |
+| BNT (Bancor)        | https://www.bancor.network  |
+| USDE (Pizza)	  	  | https://pizza.live          |
+| BOID	  	          | http://boid.io              |
+| DAPP (LiquidApps)	  | https://liquidapps.io       |
+| DICE                | https://www.dice.one        |
 
 ## Trading Pairs
 
-| **Exchange**   | **Tokens**                         |
-|----------------|------------------------------------|
-| `swap.sx`      | EOS, USDT, DAPP, BNT, BOID, DICE   |
-| `stable.sx`    | EOS, USDT, EOSDT, USDB, USDE       |
-| `eosdt.sx`     | EOS, USDT, EOSDT                   |
+| **Exchange**   | **Tokens**                                |
+|----------------|-------------------------------------------|
+| `swap.sx`      | EOS, USDT, EOSDT, DAPP, BNT, BOID, DICE   |
+| `stable.sx`    | EOS, USDT, EOSDT, USDB, USDE              |
+| `eosdt.sx`     | EOS, USDT, EOSDT                          |
 
 ## Quickstart
 
@@ -45,8 +49,7 @@ import { get_tokens, get_settings, get_rate } from "sxjs";
     // calculate price
     const quantity = "1.0000 EOS";
     const symcode = "USDT";
-    const { rate } = get_rate( quantity, symcode, tokens, settings );
-
+    const rate = get_rate( quantity, symcode, tokens, settings );
     // rate: 2.7712 USDT
 })();
 ```
@@ -85,9 +88,9 @@ Get calculated rate (includes fee)
 
 ```c++
 const asset quantity = asset{10000, symbol{"USDT", 4}};
-const symbol_code symcode = symbol_code{"EOSDT"};
-const asset rate = get_rate( "stable.sx"_n, quantity, symcode );
-//=> "1.002990000 EOSDT"
+const symbol_code symcode = symbol_code{"USDT"};
+const asset rate = swap::get_rate( "swap.sx"_n, quantity, symcode );
+//=> "2.7712 USDT"
 ```
 
 ## STATIC `get_fee`
