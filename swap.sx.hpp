@@ -11,7 +11,7 @@
 using namespace eosio;
 using namespace std;
 
-class [[eosio::contract("swap.sx")]] swap : public contract {
+class [[eosio::contract("swap.sx")]] swapSx : public contract {
 public:
     using contract::contract;
 
@@ -131,7 +131,7 @@ public:
      * ```
      */
     [[eosio::action]]
-    void setparams( const optional<stable::params> params );
+    void setparams( const optional<swapSx::params> params );
 
     /**
      * ## ACTION `token`
@@ -153,28 +153,6 @@ public:
      */
     [[eosio::action]]
     void token( const symbol_code symcode, const optional<name> contract );
-
-    /**
-     * ## ACTION `receipt`
-     *
-     * Receipt of transaction
-     *
-     * - **authority**: `get_self()`
-     *
-     * ### params
-     *
-     * - `{name} owner` - owner account
-     * - `{name} action` - receipt action ("convert")
-     * - `{list<asset>} assets` - assets involved in receipt
-     *
-     * ### example
-     *
-     * ```bash
-     * cleos push action stable.sx receipt '["myaccount", "convert", ["1.0000 EOS", "2.7200 USDT"]]' -p stable.sx
-     * ```
-     */
-    [[eosio::action]]
-    void receipt( const name owner, const name action, const list<asset> assets );
 
     /**
      * Notify contract when any token transfer notifiers relay contract
@@ -211,29 +189,10 @@ public:
         return get_price( contract, quantity - fee, symcode );
     }
 
-    /**
-     * ## STATIC `get_fee`
-     *
-     * Get calculated rate (includes fee)
-     *
-     * ### params
-     *
-     * - `{name} contract` - contract account
-     * - `{asset} quantity` - input quantity
-     *
-     * ### example
-     *
-     * ```c++
-     * const asset quantity = asset{10000, symbol{"USDT", 4}};
-     * const asset rate = get_fee( "stable.sx"_n, quantity );
-     * //=> "0.0004 USDT"
-     * ```
-     */
-    static asset get_fee( const name contract, const asset quantity );
-
     // convert
     static vector<double> get_uppers( const name contract, const symbol_code base, const symbol_code quote );
     static asset get_price( const name contract, const asset quantity, const symbol_code symcode );
+    static asset get_fee( const name contract, const asset quantity );
 
     // utils
     static double asset_to_double( const asset quantity );
@@ -249,9 +208,8 @@ public:
     static extended_symbol get_extended_symbol( const name contract, const symbol_code symcode );
 
     // action wrappers
-    using setparams_action = eosio::action_wrapper<"setparams"_n, &stable::setparams>;
-    using token_action = eosio::action_wrapper<"token"_n, &stable::token>;
-    using receipt_action = eosio::action_wrapper<"receipt"_n, &stable::receipt>;
+    using setparams_action = eosio::action_wrapper<"setparams"_n, &swapSx::setparams>;
+    using token_action = eosio::action_wrapper<"token"_n, &swapSx::token>;
 
 private:
     // utils

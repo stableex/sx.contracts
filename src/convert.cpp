@@ -1,14 +1,14 @@
-vector<double> stable::get_uppers( const name contract, const symbol_code base_symcode, const symbol_code quote_symcode )
+vector<double> swapSx::get_uppers( const name contract, const symbol_code base_symcode, const symbol_code quote_symcode )
 {
     // settings
-    stable::settings _settings( contract, contract.value );
-    stable::tokens _tokens( contract, contract.value );
+    swapSx::settings _settings( contract, contract.value );
+    swapSx::tokens _tokens( contract, contract.value );
     const tokens_row base = _tokens.get( base_symcode.raw(), "base symbol code does not exists" );
     const tokens_row quote = _tokens.get( quote_symcode.raw(), "quote symbol code does not exists" );
     const int64_t amplifier = _settings.get().amplifier;
 
     // depth
-    const double base_depth = stable::asset_to_double( base.depth );
+    const double base_depth = swapSx::asset_to_double( base.depth );
     const double quote_depth = asset_to_double( quote.depth );
 
     // ratio
@@ -22,7 +22,7 @@ vector<double> stable::get_uppers( const name contract, const symbol_code base_s
     return vector<double>{ base_upper, quote_upper };
 }
 
-asset stable::get_price( const name contract, const asset quantity, const symbol_code symcode )
+asset swapSx::get_price( const name contract, const asset quantity, const symbol_code symcode )
 {
     // quantity input
     const double in_amount = asset_to_double( quantity );
@@ -38,10 +38,10 @@ asset stable::get_price( const name contract, const asset quantity, const symbol
     return double_to_asset( out, get_symbol( contract, symcode ));
 }
 
-asset stable::get_fee( const name contract, const asset quantity )
+asset swapSx::get_fee( const name contract, const asset quantity )
 {
     // settings
-    stable::settings _settings( contract, contract.value );
+    swapSx::settings _settings( contract, contract.value );
     const int64_t fee = _settings.get().fee;
 
     // fee colleceted from incoming transfer (in basis points 1/100 of 1% )

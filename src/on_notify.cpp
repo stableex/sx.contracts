@@ -1,5 +1,5 @@
 [[eosio::on_notify("*::transfer")]]
-void stable::on_transfer( const name from, const name to, const asset quantity, const string memo )
+void swapSx::on_transfer( const name from, const name to, const asset quantity, const string memo )
 {
     // authenticate incoming `from` account
     require_auth( from );
@@ -25,7 +25,7 @@ void stable::on_transfer( const name from, const name to, const asset quantity, 
     if ( ignore.find( from ) != ignore.end() ) return;
 
     // check if contract maintenance is ongoing
-    stable::settings _settings( get_self(), get_self().value );
+    swapSx::settings _settings( get_self(), get_self().value );
     check( _settings.exists(), "contract is currently disabled for maintenance");
 
     // validate input
@@ -37,8 +37,8 @@ void stable::on_transfer( const name from, const name to, const asset quantity, 
     check_max_ratio( in_symcode );
 
     // calculate rates
-    const asset fee = stable::get_fee( get_self(), quantity );
-    const asset out = stable::get_price( get_self(), quantity - fee, out_symcode );
+    const asset fee = swapSx::get_fee( get_self(), quantity );
+    const asset out = swapSx::get_price( get_self(), quantity - fee, out_symcode );
 
     // validate output
     check_min_ratio( out );
@@ -50,5 +50,5 @@ void stable::on_transfer( const name from, const name to, const asset quantity, 
 
     // post transfer
     update_volume( vector<asset>{ quantity, out }, fee );
-    send_receipt( from, "convert"_n, list<asset>{ quantity, out });
+    set_balance( quantity.symbol.code() );
 }

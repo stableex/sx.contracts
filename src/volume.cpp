@@ -1,4 +1,4 @@
-void stable::update_volume( const vector<asset> volumes, const asset fee )
+void swapSx::update_volume( const vector<asset> volumes, const asset fee )
 {
     volume_singleton _volume( get_self(), get_self().value );
     auto volume = _volume.get_or_default();

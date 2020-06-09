@@ -20,12 +20,12 @@
 | **Exchange**   | **Tokens**                                |
 |----------------|-------------------------------------------|
 | `swap.sx`      | EOS, USDT, EOSDT, DAPP, BNT, BOID, DICE   |
-| `stable.sx`    | EOS, USDT, EOSDT, USDB, USDE              |
 | `eosdt.sx`     | EOS, USDT, EOSDT                          |
+| `stable.sx`    | EOS, USDT, EOSDT, USDB, USDE              |
 
 ## Quickstart
 
-### 1. Transfer supported token with `memo`
+### 1. Convert by token transfer with `memo`
 
 ```bash
 cleos transfer myaccount swap.sx "1.0000 EOS" "USDT"
@@ -57,20 +57,26 @@ import { get_tokens, get_settings, get_rate } from "sxjs";
 ### 3. `get_rate` EOSIO smart contract
 
 ```c++
+#include "swap.sx.hpp"
+
+// calculate rate of convert
 const asset quantity = asset{10000, symbol{"EOS", 4}};
 const symbol_code symcode = symbol_code{"USDT"};
-const asset rate = swap::get_rate( "swap.sx"_n, quantity, symcode );
+const asset rate = swapSx::get_rate("swap.sx"_n, quantity, symcode ;
 //=> "2.7712 USDT"
+
+// send token to `swap.sx` with memo as symbol code
+token::transfer_action transfer( "eosio.token"_n, { get_self(), "active"_n });
+transfer.send( get_self(), "swap.sx", quantity, symcode.to_string() );
 ```
 
-## API
+## Table of Content
 
 - [STATIC `get_rate`](#static-get_rate)
-- [STATIC `get_fee`](#static-get_fee)
 - [TABLE `settings`](#table-settings)
 - [TABLE `tokens`](#table-tokens)
 - [TABLE `volume`](#table-volume)
-- [ACTION `receipt`](#action-receipt)
+- [TABLE `docs`](#table-docs)
 - [ACTION `setparams`](#action-setparams)
 - [ACTION `token`](#action-token)
 
@@ -89,25 +95,8 @@ Get calculated rate (includes fee)
 ```c++
 const asset quantity = asset{10000, symbol{"USDT", 4}};
 const symbol_code symcode = symbol_code{"USDT"};
-const asset rate = swap::get_rate( "swap.sx"_n, quantity, symcode );
+const asset rate = swapSx::get_rate("swap.sx"_n, quantity, symcode);
 //=> "2.7712 USDT"
-```
-
-## STATIC `get_fee`
-
-Get calculated rate (includes fee)
-
-### params
-
-- `{name} contract` - contract account
-- `{asset} quantity` - input quantity
-
-### example
-
-```c++
-const asset quantity = asset{10000, symbol{"USDT", 4}};
-const asset rate = get_fee( "stable.sx"_n, quantity );
-//=> "0.0004 USDT"
 ```
 
 ## TABLE `settings`
@@ -154,32 +143,26 @@ const asset rate = get_fee( "stable.sx"_n, quantity );
 {
 "timestamp": "2020-06-03T00:00:00",
 "volume": [
-    {"key": "EOSDT", "value": "25.000000000 EOSDT"},
-    {"key": "USDT", "value": "100.0000 USDT"}
-],
-"fees": [
-    {"key": "EOSDT", "value": "0.100000000 EOSDT"},
-    {"key": "USDT", "value": "0.4000 USDT"}
-]
+        {"key": "EOSDT", "value": "25.000000000 EOSDT"},
+        {"key": "USDT", "value": "100.0000 USDT"}
+    ],
+    "fees": [
+        {"key": "EOSDT", "value": "0.100000000 EOSDT"},
+        {"key": "USDT", "value": "0.4000 USDT"}
+    ]
 }
 ```
 
-## ACTION `receipt`
+## TABLE `docs`
 
-Receipt of transaction
-
-- **authority**: `get_self()`
-
-### params
-
-- `{name} owner` - owner account
-- `{name} action` - receipt action ("convert")
-- `{list<asset>} assets` - assets involved in receipt
+- `{string} url` - Documentation url
 
 ### example
 
-```bash
-cleos push action stable.sx receipt '["myaccount", "convert", ["1.0000 EOS", "2.7200 USDT"]]' -p stable.sx
+```json
+{
+    "url": "https://github.com/stableex/sx.swap"
+}
 ```
 
 ## ACTION `token`

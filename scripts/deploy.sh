@@ -5,17 +5,17 @@ cleos wallet unlock --password $(cat ~/eosio-wallet/.pass)
 
 # create accounts
 cleos create account eosio sx EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV
-cleos create account eosio stable.sx EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV
+cleos create account eosio swap.sx EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV
 cleos create account eosio fee.sx EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV
 cleos create account eosio eosio.token EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV
 cleos create account eosio myaccount EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV
 
 # deploy
-cleos set contract stable.sx . stable.sx.wasm stable.sx.abi
+cleos set contract swap.sx . swap.sx.wasm swap.sx.abi
 cleos set contract eosio.token . eosio.token.wasm eosio.token.abi
 
 # permission
-cleos set account permission stable.sx active --add-code
+cleos set account permission swap.sx active --add-code
 
 # create USDT token
 cleos push action eosio.token create '["eosio", "100000000.0000 USDT"]' -p eosio.token

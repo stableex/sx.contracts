@@ -1,9 +1,9 @@
 [[eosio::action]]
-void stable::setparams( const optional<stable::params> params )
+void swapSx::setparams( const optional<swapSx::params> params )
 {
     require_auth( get_self() );
-    stable::settings _settings( get_self(), get_self().value );
-    stable::docs_singleton _docs( get_self(), get_self().value );
+    swapSx::settings _settings( get_self(), get_self().value );
+    swapSx::docs_singleton _docs( get_self(), get_self().value );
 
     if ( !params ) {
         _docs.remove();
@@ -21,11 +21,11 @@ void stable::setparams( const optional<stable::params> params )
 }
 
 [[eosio::action]]
-void stable::token( const symbol_code symcode, const optional<name> contract )
+void swapSx::token( const symbol_code symcode, const optional<name> contract )
 {
     require_auth( get_self() );
 
-    stable::tokens _tokens( get_self(), get_self().value );
+    swapSx::tokens _tokens( get_self(), get_self().value );
     auto itr = _tokens.find( symcode.raw() );
 
     // delete if contract is null
