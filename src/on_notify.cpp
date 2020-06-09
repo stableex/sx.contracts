@@ -14,7 +14,10 @@ void swapSx::on_transfer( const name from, const name to, const asset quantity, 
         "eosio"_n,
     };
 
-    // add/remove liquidity depth
+    // update balances (post convert transfer, triggered by `on_notify`)
+    if ( from == get_self() && ( memo == "convert" || memo == "fee") ) set_balance( quantity.symbol.code() );
+
+    // add/remove liquidity depth (must be sent using `sx` account)
     if ( from == "sx"_n || to == "sx"_n ) set_balance( quantity.symbol.code() );
     if ( from == "sx"_n ) return add_depth( quantity );
     if ( to == "sx"_n ) return sub_depth( quantity );
