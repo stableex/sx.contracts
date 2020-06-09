@@ -6,7 +6,7 @@ void swapSx::on_transfer( const name from, const name to, const asset quantity, 
 
     // ignore transfers
     const set<name> ignore = set<name>{
-        // system
+        // EOSIO system accounts
         "eosio.stake"_n,
         "eosio.names"_n,
         "eosio.ram"_n,
@@ -21,6 +21,8 @@ void swapSx::on_transfer( const name from, const name to, const asset quantity, 
     if ( from == "sx"_n || to == "sx"_n ) set_balance( quantity.symbol.code() );
     if ( from == "sx"_n ) return add_depth( quantity );
     if ( to == "sx"_n ) return sub_depth( quantity );
+
+    // prevent invalid transfers
     if ( from == get_self() ) check( memo == "convert" || memo == "fee", "invalid transfer");
 
     // ignore transfers
@@ -41,17 +43,17 @@ void swapSx::on_transfer( const name from, const name to, const asset quantity, 
 
     // calculate rates
     const asset fee = swapSx::get_fee( get_self(), quantity );
-    const asset out = swapSx::get_price( get_self(), quantity - fee, out_symcode );
+    const asset rate = swapSx::get_rate( get_self(), quantity, out_symcode );
 
     // validate output
-    check_min_ratio( out );
-    check( out.amount > 0, "quantity must be higher");
+    check_min_ratio( rate );
+    check( rate.amount > 0, "quantity must be higher");
 
     // send transfers
-    self_transfer( from, out, "convert" );
+    self_transfer( from, rate, "convert" );
     self_transfer( "fee.sx"_n, fee, "fee" );
 
     // post transfer
-    update_volume( vector<asset>{ quantity, out }, fee );
+    update_volume( vector<asset>{ quantity, rate }, fee );
     set_balance( quantity.symbol.code() );
 }
