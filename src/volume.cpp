@@ -1,6 +1,6 @@
 void swapSx::update_volume( const vector<asset> volumes, const asset fee )
 {
-    volume_singleton _volume( get_self(), get_self().value );
+    volume_table _volume( get_self(), get_self().value );
     auto volume = _volume.get_or_default();
 
     // daily timestamp (at 0:00 UTC)

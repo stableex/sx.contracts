@@ -111,12 +111,12 @@ public:
         map<symbol_code, asset>    volume;
         map<symbol_code, asset>    fees;
     };
-    typedef eosio::multi_index< "volume"_n, volume_params > volume_table;
+    typedef eosio::singleton< "volume"_n, volume_params > volume_table;
 
     /**
      * ## TABLE `spotprices`
      *
-     * - `{time_point_sec} timestamp` - daily periods (86400 seconds)
+     * - `{time_point_sec} last_modified` - last modified timestamp
      * - `{symbol_code} fees` - base symbol code
      * - `{map<symbol_code, double>} quotes` - quotes prices calculated relative to base
      *
@@ -124,7 +124,7 @@ public:
      *
      * ```json
      * {
-     *   "timestamp": "2020-06-03T00:00:00",
+     *   "last_modified": "2020-06-03T12:30:00",
      *   "base": "EOS",
      *   "quotes": [
      *     {"key": "EOSDT", "value": 0.3636},
@@ -134,7 +134,7 @@ public:
      * ```
      */
     struct [[eosio::table("spotprices")]] spotprices_params {
-        time_point_sec              timestamp;
+        time_point_sec              last_modified;
         symbol_code                 base;
         map<symbol_code, double>    quotes;
     };
