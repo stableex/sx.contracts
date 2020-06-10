@@ -8,7 +8,7 @@ vector<double> swapSx::get_uppers( const name contract, const symbol_code base_s
     const int64_t amplifier = _settings.get().amplifier;
 
     // depth
-    const double base_depth = swapSx::asset_to_double( base.depth );
+    const double base_depth = asset_to_double( base.depth );
     const double quote_depth = asset_to_double( quote.depth );
 
     // ratio

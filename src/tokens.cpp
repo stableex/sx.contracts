@@ -30,8 +30,14 @@ void swapSx::set_balance( const symbol_code symcode )
     auto itr = _tokens.find( symcode.raw() );
     if ( itr == _tokens.end() ) return;
 
+    // get active token balance of self
+    const asset balance = swapSx::get_balance( symcode );
+
+    // ignore setting balance if the same
+    if ( itr->balance == balance ) return;
+
     _tokens.modify( itr, same_payer, [&]( auto & row ) {
-        row.balance = swapSx::get_balance( symcode );
+        row.balance = balance;
     });
 }
 

@@ -3,8 +3,10 @@ void swapSx::update_volume( const vector<asset> volumes, const asset fee )
     volume_singleton _volume( get_self(), get_self().value );
     auto volume = _volume.get_or_default();
 
-    // reset volume if new daily period
+    // daily timestamp (at 0:00 UTC)
     const time_point_sec timestamp = time_point_sec( (current_time_point().sec_since_epoch() / 86400) * 86400 );
+
+    // reset volume if new daily period
     if ( timestamp > volume.timestamp ) {
         volume.volume = map<symbol_code, asset>{};
         volume.fees = map<symbol_code, asset>{};

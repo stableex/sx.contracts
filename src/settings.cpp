@@ -3,7 +3,7 @@ void swapSx::setparams( const optional<swapSx::params> params )
 {
     require_auth( get_self() );
     swapSx::settings _settings( get_self(), get_self().value );
-    swapSx::docs_singleton _docs( get_self(), get_self().value );
+    swapSx::docs _docs( get_self(), get_self().value );
 
     if ( !params ) {
         _docs.remove();

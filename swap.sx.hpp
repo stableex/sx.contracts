@@ -52,7 +52,7 @@ public:
     struct [[eosio::table("docs")]] docs_row {
         string      url = "https://github.com/stableex/sx.swap";
     };
-    typedef eosio::singleton< "docs"_n, docs_row > docs_singleton;
+    typedef eosio::singleton< "docs"_n, docs_row > docs;
 
     /**
      * ## TABLE `tokens`
@@ -112,6 +112,33 @@ public:
         map<symbol_code, asset>    fees;
     };
     typedef eosio::singleton< "volume"_n, volume_params > volume_singleton;
+
+    /**
+     * ## TABLE `spotprices`
+     *
+     * - `{time_point_sec} timestamp` - daily periods (86400 seconds)
+     * - `{symbol_code} fees` - base symbol code
+     * - `{map<symbol_code, double>} quotes` - quotes prices calculated relative to base
+     *
+     * ### example
+     *
+     * ```json
+     * {
+     *   "timestamp": "2020-06-03T00:00:00",
+     *   "base": "EOS",
+     *   "quotes": [
+     *     {"key": "EOSDT", "value": 0.3636},
+     *     {"key": "USDT", "value": 0.3636}
+     *   ]
+     * }
+     * ```
+     */
+    struct [[eosio::table("spotprices")]] spotprices_params {
+        time_point_sec              timestamp;
+        symbol_code                 base;
+        map<symbol_code, double>    quotes;
+    };
+    typedef eosio::singleton< "spotprices"_n, spotprices_params > spotprices;
 
     /**
      * ## ACTION `setparams`
@@ -232,6 +259,7 @@ private:
     // volume
     void update_volume( const vector<asset> volumes, const asset fee );
 
-    // receipt
-    void send_receipt( const name owner, const name action, const list<asset> assets );
+    // spot prices
+    void update_spot_prices( const symbol_code base );
+    double get_spot_price( const symbol_code base, const symbol_code quote );
 };
