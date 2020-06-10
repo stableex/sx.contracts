@@ -85,6 +85,7 @@ const asset rate = swapSx::get_rate( "swap.sx"_n, quantity, symcode );
 - [TABLE `settings`](#table-settings)
 - [TABLE `tokens`](#table-tokens)
 - [TABLE `volume`](#table-volume)
+- [TABLE `spotprices`](#table-spotprices)
 - [TABLE `docs`](#table-docs)
 - [ACTION `setparams`](#action-setparams)
 - [ACTION `token`](#action-token)
@@ -158,6 +159,26 @@ const asset rate = swapSx::get_rate("swap.sx"_n, quantity, symcode);
     "fees": [
         {"key": "EOSDT", "value": "0.100000000 EOSDT"},
         {"key": "USDT", "value": "0.4000 USDT"}
+    ]
+}
+```
+
+## TABLE `spotprices`
+
+- `{time_point_sec} last_modified` - last modified timestamp
+- `{symbol_code} fees` - base symbol code
+- `{map<symbol_code, double>} quotes` - quotes prices calculated relative to base
+
+### example
+
+```json
+{
+    "last_modified": "2020-06-10T19:23:08",
+    "base": "USDT",
+    "quotes": [
+        { "key": "EOS", "value": "2.73194051169110930" },
+        { "key": "USDT", "value": "1.00000000000000000" },
+        { "key": "EOSDT", "value": "0.99514989360433914" }
     ]
 }
 ```
