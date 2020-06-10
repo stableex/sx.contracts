@@ -13,7 +13,7 @@ symbol swapSx::get_symbol( const name contract, const symbol_code symcode )
 // @static
 extended_symbol swapSx::get_extended_symbol( const name contract, const symbol_code symcode )
 {
-    swapSx::tokens _tokens( contract, contract.value );
+    swapSx::tokens_table _tokens( contract, contract.value );
     auto token = _tokens.find( symcode.raw() );
     check( token != _tokens.end(), symcode.to_string() + " cannot find token");
     return extended_symbol{ token->sym, token->contract };
@@ -26,7 +26,7 @@ asset swapSx::get_balance( const symbol_code symcode )
 
 void swapSx::set_balance( const symbol_code symcode )
 {
-    swapSx::tokens _tokens( get_self(), get_self().value );
+    swapSx::tokens_table _tokens( get_self(), get_self().value );
     auto itr = _tokens.find( symcode.raw() );
     if ( itr == _tokens.end() ) return;
 
@@ -43,7 +43,7 @@ void swapSx::set_balance( const symbol_code symcode )
 
 void swapSx::add_depth( const asset quantity )
 {
-    swapSx::tokens _tokens( get_self(), get_self().value );
+    swapSx::tokens_table _tokens( get_self(), get_self().value );
     auto itr = _tokens.find( quantity.symbol.code().raw() );
     if ( itr == _tokens.end() ) return;
 
@@ -54,7 +54,7 @@ void swapSx::add_depth( const asset quantity )
 
 void swapSx::sub_depth( const asset quantity )
 {
-    swapSx::tokens _tokens( get_self(), get_self().value );
+    swapSx::tokens_table _tokens( get_self(), get_self().value );
     auto itr = _tokens.find( quantity.symbol.code().raw() );
     if ( itr == _tokens.end() ) return;
 
@@ -67,7 +67,7 @@ void swapSx::sub_depth( const asset quantity )
 double swapSx::get_ratio( const symbol_code symcode )
 {
     // calculate ratio between depth & balance
-    swapSx::tokens _tokens( get_self(), get_self().value );
+    swapSx::tokens_table _tokens( get_self(), get_self().value );
     auto token = _tokens.get( symcode.raw(), "[symcode] token does not exist");
     const asset balance = swapSx::get_balance( symcode );
     return static_cast<double>(balance.amount) / token.depth.amount;
@@ -75,7 +75,7 @@ double swapSx::get_ratio( const symbol_code symcode )
 
 asset swapSx::get_depth( const symbol_code symcode )
 {
-    swapSx::tokens _tokens( get_self(), get_self().value );
+    swapSx::tokens_table _tokens( get_self(), get_self().value );
     auto token = _tokens.get( symcode.raw(), "[symcode] token does not exist");
     return token.depth;
 }
@@ -99,7 +99,7 @@ void swapSx::check_min_ratio( const asset out )
 
 void swapSx::check_is_active( const symbol_code symcode, const name contract )
 {
-    swapSx::tokens _tokens( get_self(), get_self().value );
+    swapSx::tokens_table _tokens( get_self(), get_self().value );
     auto token = _tokens.find( symcode.raw() );
     check( token != _tokens.end(), symcode.to_string() + " token not available");
 

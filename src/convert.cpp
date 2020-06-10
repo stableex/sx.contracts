@@ -2,7 +2,7 @@ vector<double> swapSx::get_uppers( const name contract, const symbol_code base_s
 {
     // settings
     swapSx::settings _settings( contract, contract.value );
-    swapSx::tokens _tokens( contract, contract.value );
+    swapSx::tokens_table _tokens( contract, contract.value );
     const tokens_row base = _tokens.get( base_symcode.raw(), "base symbol code does not exists" );
     const tokens_row quote = _tokens.get( quote_symcode.raw(), "quote symbol code does not exists" );
     const int64_t amplifier = _settings.get().amplifier;

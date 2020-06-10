@@ -25,7 +25,7 @@ void swapSx::token( const symbol_code symcode, const optional<name> contract )
 {
     require_auth( get_self() );
 
-    swapSx::tokens _tokens( get_self(), get_self().value );
+    swapSx::tokens_table _tokens( get_self(), get_self().value );
     auto itr = _tokens.find( symcode.raw() );
 
     // delete if contract is null

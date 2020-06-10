@@ -81,7 +81,7 @@ public:
 
         uint64_t primary_key() const { return sym.code().raw(); }
     };
-    typedef eosio::multi_index< "tokens"_n, tokens_row > tokens;
+    typedef eosio::multi_index< "tokens"_n, tokens_row > tokens_table;
 
     /**
      * ## TABLE `volume`
@@ -111,7 +111,7 @@ public:
         map<symbol_code, asset>    volume;
         map<symbol_code, asset>    fees;
     };
-    typedef eosio::singleton< "volume"_n, volume_params > volume_singleton;
+    typedef eosio::multi_index< "volume"_n, volume_params > volume_table;
 
     /**
      * ## TABLE `spotprices`
@@ -138,7 +138,7 @@ public:
         symbol_code                 base;
         map<symbol_code, double>    quotes;
     };
-    typedef eosio::singleton< "spotprices"_n, spotprices_params > spotprices;
+    typedef eosio::singleton< "spotprices"_n, spotprices_params > spotprices_table;
 
     /**
      * ## ACTION `setparams`

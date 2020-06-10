@@ -1,7 +1,7 @@
 void swapSx::update_spot_prices( const symbol_code base )
 {
-    swapSx::tokens _tokens( get_self(), get_self().value );
-    swapSx::spotprices _spotprices( get_self(), get_self().value );
+    swapSx::tokens_table _tokens( get_self(), get_self().value );
+    swapSx::spotprices_table _spotprices( get_self(), get_self().value );
     auto spotprices = _spotprices.get_or_default();
 
     // daily timestamp (at 0:00 UTC)
