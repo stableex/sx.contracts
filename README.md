@@ -31,7 +31,7 @@
 cleos transfer myaccount swap.sx "1.0000 EOS" "USDT"
 ```
 
-### 2. [`sx.js`](https://github.com/stableex/sx.js) Javascript library
+### 2. `get_rate` - Javascript [`sx.js`](https://github.com/stableex/sx.js)
 
 ```js
 import { JsonRpc } from 'eosjs';
@@ -46,28 +46,24 @@ import { get_tokens, get_settings, get_rate } from "sxjs";
     const tokens = await get_tokens( rpc, code );
     const settings = await get_settings( rpc, code );
 
-    // calculate price
+    // calculate rate
     const quantity = "1.0000 EOS";
     const symcode = "USDT";
     const rate = get_rate( quantity, symcode, tokens, settings );
-    // rate: 2.7712 USDT
+    // => 2.7712 USDT
 })();
 ```
 
-### 3. `get_rate` EOSIO smart contract
+### 3. `get_rate` - EOSIO Smart Contract [`swap.sx.hpp`](https://github.com/stableex/sx.swap/blob/master/swap.sx.hpp)
 
 ```c++
 #include "swap.sx.hpp"
 
-// calculate rate of convert
+// calculate rate
 const asset quantity = asset{10000, symbol{"EOS", 4}};
 const symbol_code symcode = symbol_code{"USDT"};
 const asset rate = swapSx::get_rate("swap.sx"_n, quantity, symcode ;
-//=> "2.7712 USDT"
-
-// send token to `swap.sx` with memo as symbol code
-token::transfer_action transfer( "eosio.token"_n, { get_self(), "active"_n });
-transfer.send( get_self(), "swap.sx", quantity, symcode.to_string() );
+// => "2.7712 USDT"
 ```
 
 ## Table of Content
