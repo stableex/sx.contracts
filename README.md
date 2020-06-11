@@ -12,7 +12,7 @@
 | USDE (Pizza)	  	  | https://pizza.live          |
 | VIGOR     	  	  | https://vigor.ai            |
 
-## Supported Tokens
+## Alt Tokens
 
 | symbol              | website                     |
 |---------------------|-----------------------------|
@@ -20,15 +20,16 @@
 | BOID	  	          | http://boid.io              |
 | DAPP (LiquidApps)	  | https://liquidapps.io       |
 | DICE                | https://www.dice.one        |
+| PBTC                | https://ptokens.io          |
 
-## Trading Pairs
+## Liquidity Pools
 
-| **Exchange**   | **Tokens**                                |
-|----------------|-------------------------------------------|
-| `swap.sx`      | EOS, USDT, EOSDT, DAPP, BNT, BOID, DICE   |
-| `eosdt.sx`     | EOS, USDT, EOSDT                          |
-| `eosdt.sx`     | EOS, USDT, EOSDT, VIGOR                   |
-| `stable.sx`    | EOS, USDT, EOSDT, USDB, USDE              |
+| **Exchange**   | **Tokens**                                   |
+|----------------|----------------------------------------------|
+| `swap.sx`      | EOS, USDT, EOSDT, DAPP, BNT, BOID, DICE, PBTC
+| `eosdt.sx`     | EOS, USDT, EOSDT
+| `eosdt.sx`     | EOS, USDT, EOSDT, VIGOR
+| `stable.sx`    | EOS, USDT, EOSDT, USDB, USDE
 
 ## Quickstart
 
