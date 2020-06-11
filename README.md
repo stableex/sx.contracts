@@ -1,16 +1,22 @@
 # `swap.sx`
 
-> SX Liquidity Exchange using virtual reserves to amplify liquidity pool depth.
+> SX Leveraged Liquidity Pools
 
-## Supported Tokens
+## Stable Tokens
 
 | symbol              | website                     |
 |---------------------|-----------------------------|
 | USDT (Tether)       | https://tether.to           |
 | EOSDT (Equilibrium) | https://eosdt.com           |
 | USDB (Bancor)       | https://usdb.peg.network    |
-| BNT (Bancor)        | https://www.bancor.network  |
 | USDE (Pizza)	  	  | https://pizza.live          |
+| VIGOR     	  	  | https://vigor.ai            |
+
+## Supported Tokens
+
+| symbol              | website                     |
+|---------------------|-----------------------------|
+| BNT (Bancor)        | https://www.bancor.network  |
 | BOID	  	          | http://boid.io              |
 | DAPP (LiquidApps)	  | https://liquidapps.io       |
 | DICE                | https://www.dice.one        |
@@ -21,6 +27,7 @@
 |----------------|-------------------------------------------|
 | `swap.sx`      | EOS, USDT, EOSDT, DAPP, BNT, BOID, DICE   |
 | `eosdt.sx`     | EOS, USDT, EOSDT                          |
+| `eosdt.sx`     | EOS, USDT, EOSDT, VIGOR                   |
 | `stable.sx`    | EOS, USDT, EOSDT, USDB, USDE              |
 
 ## Quickstart
