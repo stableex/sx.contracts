@@ -28,7 +28,8 @@
 |----------------|----------------------------------------------|
 | `eosdt.sx`     | EOS, USDT, EOSDT
 | `vigor.sx`     | EOS, USDT, EOSDT, VIGOR
-| `stable.sx`    | EOS, USDT, EOSDT, USDB, USDE
+| `usde.sx`      | EOS, USDT, EOSDT, USDE
+| `stable.sx`    | EOS, USDT, EOSDT, USDE, USDB
 | `swap.sx`      | EOS, USDT, EOSDT, DAPP, BNT, BOID, DICE, PBTC
 
 ## Quickstart
