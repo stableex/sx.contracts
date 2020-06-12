@@ -50,6 +50,7 @@ void swapSx::on_transfer( const name from, const name to, const asset quantity, 
     // calculate rates
     const asset fee = swapSx::get_fee( get_self(), quantity );
     const asset rate = swapSx::get_rate( get_self(), quantity, out_symcode );
+    const double trade_price = asset_to_double( rate ) / asset_to_double( quantity );
 
     // validate output
     check_min_ratio( rate );
@@ -62,4 +63,8 @@ void swapSx::on_transfer( const name from, const name to, const asset quantity, 
     // post transfer
     update_volume( vector<asset>{ quantity, rate }, fee );
     set_balance( quantity.symbol.code() );
+
+    // trade log
+    swapSx::tradelog_action tradelog( get_self(), { get_self(), "active"_n });
+    tradelog.send( from, quantity, rate, fee, trade_price );
 }

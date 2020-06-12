@@ -9,3 +9,4 @@
 #include "src/volume.cpp"
 #include "src/bancor.cpp"
 #include "src/spot_prices.cpp"
+#include "src/log.cpp"

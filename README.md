@@ -98,6 +98,7 @@ const asset rate = swapSx::get_rate( "swap.sx"_n, quantity, symcode );
 - [TABLE `docs`](#table-docs)
 - [ACTION `setparams`](#action-setparams)
 - [ACTION `token`](#action-token)
+- [ACTION `tradelog`](#action-tradelog)
 
 ## STATIC `get_rate`
 
@@ -235,4 +236,21 @@ Update contract parameters
 
 ```bash
 cleos push action swap.sx setparams '[{"fee": 10, "amplifier": 20}]' -p stable.sx
+```
+
+## ACTION `tradelog`
+
+Notify trade to log
+
+- **authority**: `get_self()`
+
+### params
+
+- `{symbol_code} symcode` - token symbol code
+- `{name} [contract=null]` - token contract account name (if `null` delete symbol)
+
+### example
+
+```bash
+cleos push action swap.sx token '["USDT", "tethertether"]' -p swap.sx
 ```
