@@ -154,7 +154,7 @@ public:
      * ### example
      *
      * ```bash
-     * cleos push action swap.sx setparams '[{"fee": 10, "amplifier": 20}]' -p stable.sx
+     * cleos push action swap.sx setparams '[{"fee": 10, "amplifier": 20}]' -p swap.sx
      * ```
      */
     [[eosio::action]]
@@ -232,10 +232,10 @@ public:
      * ### example
      *
      * ```c++
-     * const asset quantity = asset{10000, symbol{"USDT", 4}};
-     * const symbol_code symcode = symbol_code{"EOSDT"};
-     * const asset rate = get_rate( "stable.sx"_n, quantity, symcode );
-     * //=> "1.002990000 EOSDT"
+     * const asset quantity = asset{10000, symbol{"EOS", 4}};
+     * const symbol_code symcode = symbol_code{"USDT"};
+     * const asset rate = get_rate( "swap.sx"_n, quantity, symcode );
+     * //=> "2.7712 USDT"
      * ```
      */
     static asset get_rate( const name contract, const asset quantity, const symbol_code symcode )

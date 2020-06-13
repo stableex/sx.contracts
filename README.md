@@ -113,7 +113,7 @@ Get calculated rate (includes fee)
 ### example
 
 ```c++
-const asset quantity = asset{10000, symbol{"USDT", 4}};
+const asset quantity = asset{10000, symbol{"EOS", 4}};
 const symbol_code symcode = symbol_code{"USDT"};
 const asset rate = swapSx::get_rate("swap.sx"_n, quantity, symcode);
 //=> "2.7712 USDT"
@@ -235,7 +235,7 @@ Update contract parameters
 ### example
 
 ```bash
-cleos push action swap.sx setparams '[{"fee": 10, "amplifier": 20}]' -p stable.sx
+cleos push action swap.sx setparams '[{"fee": 10, "amplifier": 20}]' -p swap.sx
 ```
 
 ## ACTION `tradelog`

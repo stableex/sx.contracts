@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # settings
-cleos push action swap.sx setparams '[{"fee": 30, "amplifier": 20}]' -p swap.sx
+cleos push action swap.sx setparams '[{"fee": 0, "amplifier": 1}]' -p swap.sx
 
 # add initial liquidity (added manually by including ignored memo)
 cleos transfer sx swap.sx "250.0000 USDT" ""
@@ -19,3 +19,6 @@ cleos -v transfer myaccount swap.sx "100.000000000 EOSDT" "USDT"
 
 # trade log
 cleos push action swap.sx tradelog '["myaccount", "1.0000 EOS", "2.5300 USDT", "0.0050 EOS", 2.53]' -p swap.sx
+
+# examples - entry
+cleos push action entry init '["1.0000 EOS"]' -p entry
