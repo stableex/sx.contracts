@@ -10,3 +10,4 @@
 #include "src/bancor.cpp"
 #include "src/spot_prices.cpp"
 #include "src/log.cpp"
+#include "src/balances.cpp"
