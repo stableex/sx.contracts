@@ -273,7 +273,6 @@ private:
     void self_transfer( const name to, const asset quantity, const string memo );
 
     // tokens
-    void set_balance( const symbol_code symcode );
     void add_depth( const asset quantity );
     void sub_depth( const asset quantity );
 
@@ -284,6 +283,10 @@ private:
     double get_ratio( const symbol_code symcode );
     asset get_balance( const symbol_code symcode );
     asset get_depth( const symbol_code symcode );
+
+    void set_balance( const symbol_code symcode );
+    void add_balance( const asset quantity );
+    void sub_balance( const asset quantity );
 
     // volume
     void update_volume( const vector<asset> volumes, const asset fee );

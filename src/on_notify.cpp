@@ -14,17 +14,11 @@ void swapSx::on_transfer( const name from, const name to, const asset quantity, 
         "eosio"_n,
     };
 
-    // update balances (post convert transfer, triggered by `on_notify`)
-    if ( from == get_self() && ( memo == "convert" || memo == "fee") ) {
-        set_balance( quantity.symbol.code() );
-        update_spot_prices( symbol_code{"USDT"} );
-    }
+    // update spot prices post transfer
+    if ( from == get_self() ) update_spot_prices( symbol_code{"USDT"} );
 
     // add/remove liquidity depth (must be sent using `sx` account)
-    if ( from == "sx"_n || to == "sx"_n ) {
-        set_balance( quantity.symbol.code() );
-        update_spot_prices( symbol_code{"USDT"} );
-    }
+    if ( from == "sx"_n || to == "sx"_n ) set_balance( quantity.symbol.code() );
     if ( from == "sx"_n ) return add_depth( quantity );
     if ( to == "sx"_n ) return sub_depth( quantity );
 
@@ -62,7 +56,11 @@ void swapSx::on_transfer( const name from, const name to, const asset quantity, 
 
     // post transfer
     update_volume( vector<asset>{ quantity, rate }, fee );
-    set_balance( quantity.symbol.code() );
+
+    // update balances `on_notify` inline transaction
+    // prevents re-entry exploit
+    add_balance( quantity );
+    sub_balance( rate );
 
     // trade log
     swapSx::tradelog_action tradelog( get_self(), { get_self(), "active"_n });

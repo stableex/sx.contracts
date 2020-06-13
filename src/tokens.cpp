@@ -19,51 +19,6 @@ extended_symbol swapSx::get_extended_symbol( const name contract, const symbol_c
     return extended_symbol{ token->sym, token->contract };
 }
 
-asset swapSx::get_balance( const symbol_code symcode )
-{
-    return token::get_balance( swapSx::get_contract( get_self(), symcode ), get_self(), symcode );
-}
-
-void swapSx::set_balance( const symbol_code symcode )
-{
-    swapSx::tokens_table _tokens( get_self(), get_self().value );
-    auto itr = _tokens.find( symcode.raw() );
-    if ( itr == _tokens.end() ) return;
-
-    // get active token balance of self
-    const asset balance = swapSx::get_balance( symcode );
-
-    // ignore setting balance if the same
-    if ( itr->balance == balance ) return;
-
-    _tokens.modify( itr, same_payer, [&]( auto & row ) {
-        row.balance = balance;
-    });
-}
-
-void swapSx::add_depth( const asset quantity )
-{
-    swapSx::tokens_table _tokens( get_self(), get_self().value );
-    auto itr = _tokens.find( quantity.symbol.code().raw() );
-    if ( itr == _tokens.end() ) return;
-
-    _tokens.modify( itr, same_payer, [&]( auto & row ) {
-        row.depth += quantity;
-    });
-}
-
-void swapSx::sub_depth( const asset quantity )
-{
-    swapSx::tokens_table _tokens( get_self(), get_self().value );
-    auto itr = _tokens.find( quantity.symbol.code().raw() );
-    if ( itr == _tokens.end() ) return;
-
-    _tokens.modify( itr, same_payer, [&]( auto & row ) {
-        row.depth -= quantity;
-        check(row.depth.amount >= 0, "depth overdrawn balance");
-    });
-}
-
 double swapSx::get_ratio( const symbol_code symcode )
 {
     // calculate ratio between depth & balance
@@ -71,13 +26,6 @@ double swapSx::get_ratio( const symbol_code symcode )
     auto token = _tokens.get( symcode.raw(), "[symcode] token does not exist");
     const asset balance = swapSx::get_balance( symcode );
     return static_cast<double>(balance.amount) / token.depth.amount;
-}
-
-asset swapSx::get_depth( const symbol_code symcode )
-{
-    swapSx::tokens_table _tokens( get_self(), get_self().value );
-    auto token = _tokens.get( symcode.raw(), "[symcode] token does not exist");
-    return token.depth;
 }
 
 void swapSx::check_max_ratio( const symbol_code symcode )
