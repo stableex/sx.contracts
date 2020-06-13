@@ -58,7 +58,7 @@ void swapSx::on_transfer( const name from, const name to, const asset quantity, 
 
     // send transfers
     self_transfer( from, rate, "convert" );
-    self_transfer( "fee.sx"_n, fee, "fee" );
+    if ( fee.amount ) self_transfer( "fee.sx"_n, fee, "fee" );
 
     // post transfer
     update_volume( vector<asset>{ quantity, rate }, fee );

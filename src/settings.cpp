@@ -17,6 +17,9 @@ void swapSx::setparams( const optional<swapSx::params> params )
     check( params->amplifier <= 100, "amplifier cannot be greater than 100x");
     check( params->amplifier >= 0, "amplifier must be positive");
 
+    // cannot modify amplifier once set
+    if ( _settings.exists() ) check( _settings.get().amplifier == params->amplifier, "amplifier cannot be modified");
+
     _settings.set( *params, get_self() );
 }
 
