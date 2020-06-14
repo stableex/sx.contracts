@@ -1,6 +1,6 @@
 # `swap.sx`
 
-> SX Leveraged Liquidity Exchange
+> SX Leveraged Liquidity Pools
 
 ## Stable Tokens
 
@@ -20,17 +20,18 @@
 | BOID	  	          | http://boid.io              |
 | DAPP (LiquidApps)	  | https://liquidapps.io       |
 | DICE                | https://www.dice.one        |
-| PBTC                | https://ptokens.io          |
+| PBTC (Bitcoin)      | https://ptokens.io          |
+| CHEX (Chintai)      | https://chintai.io          |
 
 ## Liquidity Pools
 
-| **Exchange**   | **Tokens**                                   |
-|----------------|----------------------------------------------|
+| **Exchange**   | **Tokens**      |
+|----------------|-----------------|
 | `eosdt.sx`     | EOS, USDT, EOSDT
 | `vigor.sx`     | EOS, USDT, EOSDT, VIGOR
 | `usde.sx`      | EOS, USDT, EOSDT, USDE
-| `stable.sx`    | EOS, USDT, EOSDT, USDE, USDB
-| `swap.sx`      | EOS, USDT, EOSDT, DAPP, BNT, BOID, DICE, PBTC
+| `stable.sx`    | EOS, USDT, EOSDT, USDE, USDB, PBTC
+| `swap.sx`      | EOS, USDT, EOSDT, DAPP, BNT, BOID, DICE, PBTC, CHEX
 
 ## Quickstart
 
