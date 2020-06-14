@@ -14,15 +14,14 @@ public:
 	using contract::contract;
 
 	[[eosio::action]]
-	void swap( const asset quantity )
+	void init( const asset quantity, const symbol_code symcode )
 	{
-		const asset quantity = asset{10000, symbol{"EOS", 4}};
-        const symbol_code symcode = symbol_code{"USDT"};
+		// pre-calculate rate
         const asset rate = swapSx::get_rate("swap.sx"_n, quantity, symcode);
-        //=> "2.7712 USDT"
+		print("rate: " + rate.to_string() );
 
         // swap
         token::transfer_action transfer( "eosio.token"_n, { get_self(), "active"_n });
-		transfer.send( get_self(), from, quantity, rate.to_string() );
+		transfer.send( get_self(), "swap.sx"_n, quantity, symcode.to_string() );
 	}
 };

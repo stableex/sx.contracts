@@ -245,27 +245,110 @@ public:
      */
     static asset get_rate( const name contract, const asset quantity, const symbol_code symcode )
     {
-        const asset fee = get_fee( contract, quantity );
-        return get_price( contract, quantity - fee, symcode );
+        const asset fee = swapSx::get_fee( contract, quantity );
+        return swapSx::get_price( contract, quantity - fee, symcode );
     }
 
     // convert
-    static vector<double> get_uppers( const name contract, const symbol_code base, const symbol_code quote );
-    static asset get_price( const name contract, const asset quantity, const symbol_code symcode );
-    static asset get_fee( const name contract, const asset quantity );
+    static vector<double> get_uppers( const name contract, const symbol_code base_symcode, const symbol_code quote_symcode )
+    {
+        // settings
+        swapSx::settings _settings( contract, contract.value );
+        swapSx::tokens_table _tokens( contract, contract.value );
+        const tokens_row base = _tokens.get( base_symcode.raw(), "base symbol code does not exists" );
+        const tokens_row quote = _tokens.get( quote_symcode.raw(), "quote symbol code does not exists" );
+        const int64_t amplifier = _settings.get().amplifier;
+
+        // depth
+        const double base_depth = swapSx::asset_to_double( base.depth );
+        const double quote_depth = swapSx::asset_to_double( quote.depth );
+
+        // ratio
+        const double base_ratio = static_cast<double>(base.balance.amount) / base.depth.amount;
+        const double quote_ratio = static_cast<double>(quote.balance.amount) / quote.depth.amount;
+
+        // upper
+        const double base_upper = ( amplifier * base_depth - base_depth + (base_depth * base_ratio));
+        const double quote_upper = ( amplifier * quote_depth - quote_depth + (quote_depth * quote_ratio));
+
+        return vector<double>{ base_upper, quote_upper };
+    }
+
+    static asset get_price( const name contract, const asset quantity, const symbol_code symcode )
+    {
+        // quantity input
+        const double in_amount = swapSx::asset_to_double( quantity );
+
+        // upper limits
+        const vector<double> uppers = swapSx::get_uppers( contract, quantity.symbol.code(), symcode );
+        const double base_upper = uppers[0];
+        const double quote_upper = uppers[1];
+
+        // Bancor V1 Formula
+        const double out = swapSx::get_bancor_output( base_upper, quote_upper, in_amount );
+
+        return swapSx::double_to_asset( out, get_symbol( contract, symcode ));
+    }
+
+    static asset get_fee( const name contract, const asset quantity )
+    {
+        // settings
+        swapSx::settings _settings( contract, contract.value );
+        const int64_t fee = _settings.get().fee;
+
+        // fee colleceted from incoming transfer (in basis points 1/100 of 1% )
+        asset calculated_fee = quantity * fee / 10000;
+
+        // set minimum fee to smallest decimal of asset
+        if ( fee > 0 && calculated_fee.amount == 0 ) calculated_fee.amount = 1;
+        check( calculated_fee < quantity, "fee exceeds quantity");
+        return calculated_fee;
+    }
 
     // utils
-    static double asset_to_double( const asset quantity );
-    static asset double_to_asset( const double amount, const symbol sym );
+    static double asset_to_double( const asset quantity )
+    {
+        if ( quantity.amount == 0 ) return 0.0;
+        return quantity.amount / pow(10, quantity.symbol.precision());
+    }
+    static asset double_to_asset( const double amount, const symbol sym )
+    {
+        return asset{ static_cast<int64_t>(amount * pow(10, sym.precision())), sym };
+    }
 
     // bancor
-    static double get_bancor_output( const double base_reserve, const double quote_reserve, const double quantity );
-    static double get_bancor_input( const double quote_reserve, const double base_reserve, const double out );
+    static double get_bancor_output( const double base_reserve, const double quote_reserve, const double quantity )
+    {
+        const double out = (quantity * quote_reserve) / (base_reserve + quantity);
+        if ( out < 0 ) return 0;
+        return out;
+    }
+
+    static double get_bancor_input( const double quote_reserve, const double base_reserve, const double out )
+    {
+        const double inp = (base_reserve * out) / (quote_reserve - out);
+        if ( inp < 0 ) return 0;
+        return inp;
+    }
 
     // tokens
-    static name get_contract( const name contract, const symbol_code symcode );
-    static symbol get_symbol( const name contract, const symbol_code symcode );
-    static extended_symbol get_extended_symbol( const name contract, const symbol_code symcode );
+    static name get_contract( const name contract, const symbol_code symcode )
+    {
+        return get_extended_symbol( contract, symcode ).get_contract();
+    }
+
+    static symbol get_symbol( const name contract, const symbol_code symcode )
+    {
+        return get_extended_symbol( contract, symcode ).get_symbol();
+    }
+
+    static extended_symbol get_extended_symbol( const name contract, const symbol_code symcode )
+    {
+        swapSx::tokens_table _tokens( contract, contract.value );
+        auto token = _tokens.find( symcode.raw() );
+        check( token != _tokens.end(), symcode.to_string() + " cannot find token");
+        return extended_symbol{ token->sym, token->contract };
+    }
 
     // action wrappers
     using setparams_action = eosio::action_wrapper<"setparams"_n, &swapSx::setparams>;

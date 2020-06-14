@@ -1,24 +1,3 @@
-// @static
-name swapSx::get_contract( const name contract, const symbol_code symcode )
-{
-    return get_extended_symbol( contract, symcode ).get_contract();
-}
-
-// @static
-symbol swapSx::get_symbol( const name contract, const symbol_code symcode )
-{
-    return get_extended_symbol( contract, symcode ).get_symbol();
-}
-
-// @static
-extended_symbol swapSx::get_extended_symbol( const name contract, const symbol_code symcode )
-{
-    swapSx::tokens_table _tokens( contract, contract.value );
-    auto token = _tokens.find( symcode.raw() );
-    check( token != _tokens.end(), symcode.to_string() + " cannot find token");
-    return extended_symbol{ token->sym, token->contract };
-}
-
 bool swapSx::is_token_exists( const symbol_code symcode )
 {
     swapSx::tokens_table _tokens( get_self(), get_self().value );

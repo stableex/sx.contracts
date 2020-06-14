@@ -31,6 +31,7 @@ cleos push action eosio.token issue '["eosio", "5000000.0000 A", "init"]' -p eos
 cleos transfer eosio myaccount "50000.0000 A" "init"
 cleos transfer eosio sx "50000.0000 A" "init"
 cleos transfer eosio entry "100.0000 A" "init"
+cleos transfer eosio basic "100.0000 A" "init"
 
 # create B token
 cleos push action eosio.token create '["eosio", "100000000.000000000 B"]' -p eosio.token

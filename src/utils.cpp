@@ -1,18 +1,5 @@
 #include <math.h>
 
-// @static
-double swapSx::asset_to_double( const asset quantity )
-{
-    if ( quantity.amount == 0 ) return 0.0;
-    return quantity.amount / pow(10, quantity.symbol.precision());
-}
-
-// @static
-asset swapSx::double_to_asset( const double amount, const symbol sym )
-{
-    return asset{ static_cast<int64_t>(amount * pow(10, sym.precision())), sym };
-}
-
 symbol_code swapSx::parse_memo_symcode( const string memo )
 {
     const string error = "`memo` must be symbol code (ex: \"USDT\")";

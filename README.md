@@ -25,7 +25,7 @@
 
 ## Liquidity Pools
 
-| **Exchange**   | **Tokens**      |
+| **Pool**       | **Tokens**      |
 |----------------|-----------------|
 | `eosdt.sx`     | EOS, USDT, EOSDT
 | `vigor.sx`     | EOS, USDT, EOSDT, VIGOR
