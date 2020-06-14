@@ -14,9 +14,6 @@ void swapSx::on_transfer( const name from, const name to, const asset quantity, 
         "eosio"_n,
     };
 
-    // update spot prices post transfer
-    if ( from == get_self() ) update_spot_prices( symbol_code{"USDT"} );
-
     // add/remove liquidity depth (must be sent using `sx` account)
     if ( from == "sx"_n || to == "sx"_n ) set_balance( quantity.symbol.code() );
     if ( from == "sx"_n ) return add_depth( quantity );
@@ -44,7 +41,6 @@ void swapSx::on_transfer( const name from, const name to, const asset quantity, 
     // calculate rates
     const asset fee = swapSx::get_fee( get_self(), quantity );
     const asset rate = swapSx::get_rate( get_self(), quantity, out_symcode );
-    const double trade_price = asset_to_double( rate ) / asset_to_double( quantity );
 
     // validate output
     check_min_ratio( rate );
@@ -59,10 +55,13 @@ void swapSx::on_transfer( const name from, const name to, const asset quantity, 
 
     // update balances `on_notify` inline transaction
     // prevents re-entry exploit
-    add_balance( quantity );
+    add_balance( quantity - fee );
     sub_balance( rate );
+    update_spot_prices();
 
     // trade log
-    swapSx::tradelog_action tradelog( get_self(), { get_self(), "active"_n });
-    tradelog.send( from, quantity, rate, fee, trade_price );
+    const double trade_price = asset_to_double( rate ) / asset_to_double( quantity );
+    const double spot_price = get_spot_price( _settings.get().spot_price_base, rate.symbol.code() );
+    swapSx::log_action log( get_self(), { get_self(), "active"_n });
+    log.send( from, quantity, rate, fee, trade_price, spot_price );
 }

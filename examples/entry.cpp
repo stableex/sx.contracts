@@ -15,22 +15,23 @@ public:
 	void init( const asset quantity )
 	{
         token::transfer_action transfer( "eosio.token"_n, { get_self(), "active"_n });
-		transfer.send( get_self(), "swap.sx"_n, quantity, "USDT" );
+		transfer.send( get_self(), "swap.sx"_n, quantity, "B" );
 	}
 
 	[[eosio::on_notify("eosio.token::transfer")]]
 	void on_transfer( const name from, const name to, const asset quantity, const string memo )
 	{
-        if ( from != "swap.sx"_n ) return;
-		if ( quantity.symbol.code() != symbol_code{"USDT"} ) return;
+        if ( to != get_self() ) return;
+		if ( quantity.symbol.code() != symbol_code{"B"} ) return;
 
         // re-rentry with incoming transfer
 		token::transfer_action transfer( "eosio.token"_n, { get_self(), "active"_n });
 
+		// split into 4 requests
 		const asset partial = quantity / 4;
-		transfer.send( get_self(), "swap.sx"_n, partial, "EOS" );
-		transfer.send( get_self(), "swap.sx"_n, partial, "EOS" );
-		transfer.send( get_self(), "swap.sx"_n, partial, "EOS" );
-		transfer.send( get_self(), "swap.sx"_n, partial, "EOS" );
+		transfer.send( get_self(), "swap.sx"_n, partial, "A" );
+		transfer.send( get_self(), "swap.sx"_n, partial, "A" );
+		transfer.send( get_self(), "swap.sx"_n, partial, "A" );
+		transfer.send( get_self(), "swap.sx"_n, partial, "A" );
 	}
 };

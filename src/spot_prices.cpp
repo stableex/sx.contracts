@@ -1,8 +1,15 @@
-void swapSx::update_spot_prices( const symbol_code base )
+void swapSx::update_spot_prices()
 {
+    swapSx::settings _settings( get_self(), get_self().value );
     swapSx::tokens_table _tokens( get_self(), get_self().value );
     swapSx::spotprices_table _spotprices( get_self(), get_self().value );
     auto spotprices = _spotprices.get_or_default();
+
+    // settings
+    const symbol_code base = _settings.get().spot_price_base;
+
+    // ignore if base symbol does not exists
+    if ( _tokens.find( base.raw() ) == _tokens.end() ) return;
 
     // spot prices
     for ( const auto token : _tokens ) {

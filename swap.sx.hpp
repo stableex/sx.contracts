@@ -20,19 +20,22 @@ public:
      *
      * - `{int64_t} fee` - trading fee (pips 1/100 of 1%)
      * - `{int64_t} amplifier` - liquidity pool amplifier
+     * - `{symbol_code} spot_price_base` - spot price base symbol code
      *
      * ### example
      *
      * ```json
      * {
      *   "fee": 20,
-     *   "amplifier": 100
+     *   "amplifier": 100,
+     *   "spot_price_base": "USDT"
      * }
      * ```
      */
     struct [[eosio::table("settings")]] params {
         int64_t             fee;
         int64_t             amplifier;
+        symbol_code         spot_price_base;
     };
     typedef eosio::singleton< "settings"_n, params > settings;
 
@@ -182,9 +185,9 @@ public:
     void token( const symbol_code symcode, const optional<name> contract );
 
     /**
-     * ## ACTION `tradelog`
+     * ## ACTION `log`
      *
-     * Notify trade to log
+     * Notify of trade
      *
      * - **authority**: `get_self()`
      *
@@ -195,19 +198,21 @@ public:
      * - `{asset} rate` - outgoing rate
      * - `{asset} fee` - fee paid per trade
      * - `{double} trade_price` - trade price per unit
+     * - `{double} spot_price` - spot price per rate
      *
      * ### example
      *
      * ```bash
-     * cleos push action swap.sx tradelog '["myaccount", "1.0000 EOS", "2.5300 USDT", "0.0050 EOS", 2.53]' -p swap.sx
+     * cleos push action swap.sx log '["myaccount", "1.0000 EOS", "2.5300 USDT", "0.0050 EOS", 2.53]' -p swap.sx
      * ```
      */
     [[eosio::action]]
-    void tradelog( const name buyer,
-                   const asset quantity,
-                   const asset rate,
-                   const asset fee,
-                   const double trade_price );
+    void log( const name buyer,
+              const asset quantity,
+              const asset rate,
+              const asset fee,
+              const double trade_price,
+              const double spot_price );
 
     /**
      * Notify contract when any token transfer notifiers relay contract
@@ -265,7 +270,7 @@ public:
     // action wrappers
     using setparams_action = eosio::action_wrapper<"setparams"_n, &swapSx::setparams>;
     using token_action = eosio::action_wrapper<"token"_n, &swapSx::token>;
-    using tradelog_action = eosio::action_wrapper<"tradelog"_n, &swapSx::tradelog>;
+    using log_action = eosio::action_wrapper<"log"_n, &swapSx::log>;
 
 private:
     // utils
@@ -292,6 +297,6 @@ private:
     void update_volume( const vector<asset> volumes, const asset fee );
 
     // spot prices
-    void update_spot_prices( const symbol_code base );
+    void update_spot_prices();
     double get_spot_price( const symbol_code base, const symbol_code quote );
 };

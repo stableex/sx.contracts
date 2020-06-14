@@ -25,22 +25,22 @@ cleos set account permission swap.sx active --add-code
 cleos set account permission basic active --add-code
 cleos set account permission entry active --add-code
 
-# create USDT token
-cleos push action eosio.token create '["eosio", "100000000.0000 USDT"]' -p eosio.token
-cleos push action eosio.token issue '["eosio", "5000000.0000 USDT", "init"]' -p eosio
-cleos transfer eosio myaccount "50000.0000 USDT" "init"
-cleos transfer eosio sx "50000.0000 USDT" "init"
+# create A token
+cleos push action eosio.token create '["eosio", "100000000.0000 A"]' -p eosio.token
+cleos push action eosio.token issue '["eosio", "5000000.0000 A", "init"]' -p eosio
+cleos transfer eosio myaccount "50000.0000 A" "init"
+cleos transfer eosio sx "50000.0000 A" "init"
+cleos transfer eosio entry "100.0000 A" "init"
 
-# create EOSDT token
-cleos push action eosio.token create '["eosio", "100000000.000000000 EOSDT"]' -p eosio.token
-cleos push action eosio.token issue '["eosio", "50000000.000000000 EOSDT", "init"]' -p eosio
-cleos transfer eosio myaccount "50000.000000000 EOSDT" "init"
-cleos transfer eosio sx "50000.000000000 EOSDT" "init"
+# create B token
+cleos push action eosio.token create '["eosio", "100000000.000000000 B"]' -p eosio.token
+cleos push action eosio.token issue '["eosio", "50000000.000000000 B", "init"]' -p eosio
+cleos transfer eosio myaccount "50000.000000000 B" "init"
+cleos transfer eosio sx "50000.000000000 B" "init"
 
-# create EOS token
-cleos push action eosio.token create '["eosio", "100000000.0000 EOS"]' -p eosio.token
-cleos push action eosio.token issue '["eosio", "5000000.0000 EOS", "init"]' -p eosio
-cleos transfer eosio myaccount "50000.0000 EOS" "init"
-cleos transfer eosio sx "50000.0000 EOS" "init"
-cleos transfer eosio entry "100.0000 EOS" "init"
-cleos transfer eosio basic "100.0000 EOS" "init"
+# create C token
+cleos push action eosio.token create '["eosio", "100000000.0000 C"]' -p eosio.token
+cleos push action eosio.token issue '["eosio", "5000000.0000 C", "init"]' -p eosio
+cleos transfer eosio myaccount "50000.0000 C" "init"
+cleos transfer eosio sx "50000.0000 C" "init"
+cleos transfer eosio basic "100.0000 C" "init"
