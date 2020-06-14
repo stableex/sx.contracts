@@ -19,6 +19,12 @@ extended_symbol swapSx::get_extended_symbol( const name contract, const symbol_c
     return extended_symbol{ token->sym, token->contract };
 }
 
+bool swapSx::is_token_exists( const symbol_code symcode )
+{
+    swapSx::tokens_table _tokens( get_self(), get_self().value );
+    return ( _tokens.find( symcode.raw() ) != _tokens.end() );
+}
+
 double swapSx::get_ratio( const symbol_code symcode )
 {
     // calculate ratio between depth & balance

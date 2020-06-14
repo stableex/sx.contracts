@@ -11,6 +11,9 @@
 using namespace eosio;
 using namespace std;
 
+// settings
+static constexpr symbol_code SPOT_PRICE_BASE = symbol_code{"USDT"};
+
 class [[eosio::contract("swap.sx")]] swapSx : public contract {
 public:
     using contract::contract;
@@ -20,22 +23,19 @@ public:
      *
      * - `{int64_t} fee` - trading fee (pips 1/100 of 1%)
      * - `{int64_t} amplifier` - liquidity pool amplifier
-     * - `{symbol_code} spot_price_base` - spot price base symbol code
      *
      * ### example
      *
      * ```json
      * {
      *   "fee": 20,
-     *   "amplifier": 100,
-     *   "spot_price_base": "USDT"
+     *   "amplifier": 100
      * }
      * ```
      */
     struct [[eosio::table("settings")]] params {
         int64_t             fee;
         int64_t             amplifier;
-        symbol_code         spot_price_base;
     };
     typedef eosio::singleton< "settings"_n, params > settings;
 
@@ -280,6 +280,7 @@ private:
     // tokens
     void add_depth( const asset quantity );
     void sub_depth( const asset quantity );
+    bool is_token_exists( const symbol_code symcode );
 
     void check_is_active( const symbol_code symcode, const name contract );
     void check_max_ratio( const symbol_code symcode );

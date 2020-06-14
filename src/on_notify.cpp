@@ -61,7 +61,7 @@ void swapSx::on_transfer( const name from, const name to, const asset quantity, 
 
     // trade log
     const double trade_price = asset_to_double( rate ) / asset_to_double( quantity );
-    const double spot_price = get_spot_price( _settings.get().spot_price_base, rate.symbol.code() );
+    const double spot_price = get_spot_price( SPOT_PRICE_BASE, rate.symbol.code() );
     swapSx::log_action log( get_self(), { get_self(), "active"_n });
     log.send( from, quantity, rate, fee, trade_price, spot_price );
 }
