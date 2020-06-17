@@ -25,13 +25,13 @@
 
 ## Liquidity Pools
 
-| **Pool**       | **Tokens**      |
-|----------------|-----------------|
-| `eosdt.sx`     | EOS, USDT, EOSDT
-| `vigor.sx`     | EOS, USDT, EOSDT, VIGOR
-| `usde.sx`      | EOS, USDT, EOSDT, USDE
-| `stable.sx`    | EOS, USDT, EOSDT, USDE, USDB, PBTC
-| `swap.sx`      | EOS, USDT, EOSDT, DAPP, BNT, BOID, DICE, PBTC, CHEX
+| **Pool**       | **Amplifier** | **Tokens**      |
+|----------------|---------------|-----------------|
+| `eosdt.sx`     | 20  | EOS, USDT, EOSDT
+| `vigor.sx`     | 10  | EOS, USDT, EOSDT, VIGOR
+| `usde.sx`      | 10  | EOS, USDT, EOSDT, USDE
+| `stable.sx`    | 20  | EOS, USDT, EOSDT, USDE, USDB, PBTC
+| `swap.sx`      | 1   | EOS, USDT, EOSDT, DAPP, BNT, BOID, DICE, PBTC, CHEX
 
 ## Quickstart
 

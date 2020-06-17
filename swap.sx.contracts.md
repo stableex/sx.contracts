@@ -20,8 +20,8 @@ icon: https://avatars1.githubusercontent.com/u/60660770#d6a1df4bbf2942f23c3a4485
 
 ---
 spec_version: "0.2.0"
-title: tradelog
-summary: Notify of trade
+title: log
+summary: Notify of trade action
 icon: https://avatars1.githubusercontent.com/u/60660770#d6a1df4bbf2942f23c3a4485eb9942cb37c5348945e84be8c53e2ef9254ed8da
 ---
 
