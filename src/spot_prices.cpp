@@ -8,6 +8,7 @@ void swapSx::update_spot_prices()
     if ( !is_token_exists( SPOT_PRICE_BASE ) ) return;
 
     // spot prices
+    spotprices.quotes = map<symbol_code, double>{};
     for ( const auto token : _tokens ) {
         const symbol_code quote = token.sym.code();
         spotprices.quotes[quote] = get_spot_price( SPOT_PRICE_BASE, quote );
