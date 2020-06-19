@@ -12,26 +12,15 @@
 | USDE (Pizza)	  	  | https://pizza.live          |
 | VIGOR     	  	  | https://vigor.ai            |
 
-## Alt Tokens
-
-| symbol              | website                     |
-|---------------------|-----------------------------|
-| BNT (Bancor)        | https://www.bancor.network  |
-| BOID	  	          | http://boid.io              |
-| DAPP (LiquidApps)	  | https://liquidapps.io       |
-| DICE                | https://www.dice.one        |
-| PBTC (Bitcoin)      | https://ptokens.io          |
-| CHEX (Chintai)      | https://chintai.io          |
-
 ## Liquidity Pools
 
-| **Pool**       | **Amplifier** | **Tokens**      |
-|----------------|---------------|-----------------|
-| `eosdt.sx`     | 20  | EOS, USDT, EOSDT
-| `vigor.sx`     | 10  | EOS, USDT, EOSDT, VIGOR
-| `usde.sx`      | 10  | EOS, USDT, EOSDT, USDE
-| `stable.sx`    | 20  | EOS, USDT, EOSDT, USDE, USDB, PBTC
-| `swap.sx`      | 1   | EOS, USDT, EOSDT, DAPP, BNT, BOID, DICE, PBTC, CHEX
+| **Pool**       | **Tokens**      |
+|----------------|-----------------|
+| `swap.sx`      | EOS, USDT
+| `eosdt.sx`     | EOS, USDT, EOSDT
+| `vigor.sx`     | EOS, USDT, VIGOR
+| `usde.sx`      | EOS, USDT, USDE
+| `stable.sx`    | EOS, USDT, USDE, EOSDT, USDB, VIGOR
 
 ## Quickstart
 
@@ -129,8 +118,8 @@ const asset rate = swapSx::get_rate("swap.sx"_n, quantity, symcode);
 
 ```json
 {
-    "fee": 20,
-    "amplifier": 100
+    "fee": 50,
+    "amplifier": 20
 }
 ```
 
@@ -162,14 +151,14 @@ const asset rate = swapSx::get_rate("swap.sx"_n, quantity, symcode);
 
 ```json
 {
-"timestamp": "2020-06-03T00:00:00",
-"volume": [
-        {"key": "EOSDT", "value": "25.000000000 EOSDT"},
+    "timestamp": "2020-06-03T00:00:00",
+    "volume": [
+        {"key": "EOS", "value": "25.0000 EOS"},
         {"key": "USDT", "value": "100.0000 USDT"}
     ],
     "fees": [
-        {"key": "EOSDT", "value": "0.100000000 EOSDT"},
-        {"key": "USDT", "value": "0.4000 USDT"}
+        {"key": "EOS", "value": "0.1250 EOS"},
+        {"key": "USDT", "value": "0.5000 USDT"}
     ]
 }
 ```
@@ -236,7 +225,7 @@ Update contract parameters
 ### example
 
 ```bash
-cleos push action swap.sx setparams '[{"fee": 10, "amplifier": 20}]' -p swap.sx
+cleos push action swap.sx setparams '[{"fee": 50, "amplifier": 20}]' -p swap.sx
 ```
 
 ## ACTION `tradelog`

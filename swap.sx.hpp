@@ -28,8 +28,8 @@ public:
      *
      * ```json
      * {
-     *   "fee": 20,
-     *   "amplifier": 100
+     *   "fee": 50,
+     *   "amplifier": 20
      * }
      * ```
      */
@@ -97,15 +97,15 @@ public:
      *
      * ```json
      * {
-     *   "timestamp": "2020-06-03T00:00:00",
-     *   "volume": [
-     *     {"key": "EOSDT", "value": "25.000000000 EOSDT"},
-     *     {"key": "USDT", "value": "100.0000 USDT"}
-     *   ],
-     *   "fees": [
-     *     {"key": "EOSDT", "value": "0.100000000 EOSDT"},
-     *     {"key": "USDT", "value": "0.4000 USDT"}
-     *   ]
+     *     "timestamp": "2020-06-03T00:00:00",
+     *     "volume": [
+     *         {"key": "EOS", "value": "25.0000 EOS"},
+     *         {"key": "USDT", "value": "100.0000 USDT"}
+     *     ],
+     *     "fees": [
+     *         {"key": "EOS", "value": "0.1250 EOS"},
+     *         {"key": "USDT", "value": "0.5000 USDT"}
+     *     ]
      * }
      * ```
      */
@@ -157,7 +157,7 @@ public:
      * ### example
      *
      * ```bash
-     * cleos push action swap.sx setparams '[{"fee": 10, "amplifier": 20}]' -p swap.sx
+     * cleos push action swap.sx setparams '[{"fee": 50, "amplifier": 20}]' -p swap.sx
      * ```
      */
     [[eosio::action]]
