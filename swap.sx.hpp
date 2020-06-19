@@ -383,4 +383,7 @@ private:
     // spot prices
     void update_spot_prices();
     double get_spot_price( const symbol_code base, const symbol_code quote );
+
+    // settings
+    void erase_all_tokens();
 };

@@ -5,9 +5,11 @@ void swapSx::setparams( const optional<swapSx::params> params )
     swapSx::settings _settings( get_self(), get_self().value );
     swapSx::docs _docs( get_self(), get_self().value );
 
+    // clear table if params is `null`
     if ( !params ) {
         _docs.remove();
         _settings.remove();
+        erase_all_tokens();
         return;
     }
     _docs.get_or_create( get_self() );
@@ -51,4 +53,18 @@ void swapSx::token( const symbol_code symcode, const optional<name> contract )
         row.balance = balance;
         row.depth = balance;
     });
+}
+
+void swapSx::erase_all_tokens()
+{
+    swapSx::tokens_table _tokens( get_self(), get_self().value );
+
+    set<symbol_code> tokens;
+    for ( auto row : _tokens ) {
+        tokens.insert(row.sym.code());
+    }
+
+    for ( const symbol_code symcode : tokens ) {
+        _tokens.erase( _tokens.find( symcode.raw() ));
+    }
 }
