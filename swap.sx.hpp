@@ -199,11 +199,12 @@ public:
      * - `{asset} fee` - fee paid per trade
      * - `{double} trade_price` - trade price per unit
      * - `{double} spot_price` - spot price per rate
+     * - `{double} value` - total value of trade relative to spot price symbol
      *
      * ### example
      *
      * ```bash
-     * cleos push action swap.sx log '["myaccount", "1.0000 EOS", "2.5300 USDT", "0.0050 EOS", 2.53]' -p swap.sx
+     * cleos push action swap.sx log '["myaccount", "1.0000 EOS", "2.5300 USDT", "0.0050 EOS", 2.53, 2.53, 2.53]' -p swap.sx
      * ```
      */
     [[eosio::action]]
@@ -212,7 +213,8 @@ public:
               const asset rate,
               const asset fee,
               const double trade_price,
-              const double spot_price );
+              const double spot_price,
+              const double value );
 
     /**
      * Notify contract when any token transfer notifiers relay contract

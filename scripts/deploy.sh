@@ -25,6 +25,12 @@ cleos set account permission swap.sx active --add-code
 cleos set account permission basic active --add-code
 cleos set account permission entry active --add-code
 
+# create USDT token
+cleos push action eosio.token create '["eosio", "100000000.0000 USDT"]' -p eosio.token
+cleos push action eosio.token issue '["eosio", "5000000.0000 USDT", "init"]' -p eosio
+cleos transfer eosio myaccount "50000.0000 USDT" "init"
+cleos transfer eosio sx "50000.0000 USDT" "init"
+
 # create A token
 cleos push action eosio.token create '["eosio", "100000000.0000 A"]' -p eosio.token
 cleos push action eosio.token issue '["eosio", "5000000.0000 A", "init"]' -p eosio

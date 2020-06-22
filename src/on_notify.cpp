@@ -62,6 +62,11 @@ void swapSx::on_transfer( const name from, const name to, const asset quantity, 
     // trade log
     const double trade_price = asset_to_double( rate ) / asset_to_double( quantity );
     const double spot_price = get_spot_price( SPOT_PRICE_BASE, rate.symbol.code() );
+    const double value = spot_price * asset_to_double( rate );
+
     swapSx::log_action log( get_self(), { get_self(), "active"_n });
-    log.send( from, quantity, rate, fee, trade_price, spot_price );
+    log.send( from, quantity, rate, fee, trade_price, spot_price, value );
+
+    // enforce 1.00 trades (prevents spam)
+    check( value >= 1.0, "minimum trade value must exceed 1.00 " + SPOT_PRICE_BASE.to_string() );
 }
