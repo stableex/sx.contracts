@@ -1,6 +1,6 @@
 # `swap.sx`
 
-> SX Leveraged Liquidity Pools
+> SX Amplified Liquidity Pools
 
 ## Stable Tokens
 
