@@ -204,7 +204,7 @@ public:
      * ### example
      *
      * ```bash
-     * cleos push action swap.sx log '["myaccount", "1.0000 EOS", "2.5300 USDT", "0.0050 EOS", 2.53, 2.53, 2.53]' -p swap.sx
+     * cleos push action swap.sx log '["myaccount", "3.0000 EOS", "7.0486 USDT", "0.0060 EOS", 2.3495, 1.0119, 7.1327]' -p swap.sx
      * ```
      */
     [[eosio::action]]

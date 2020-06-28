@@ -85,7 +85,7 @@ const asset rate = swapSx::get_rate( "swap.sx"_n, quantity, symcode );
 - [TABLE `docs`](#table-docs)
 - [ACTION `setparams`](#action-setparams)
 - [ACTION `token`](#action-token)
-- [ACTION `tradelog`](#action-tradelog)
+- [ACTION `log`](#action-log)
 
 ## STATIC `get_rate`
 
@@ -115,8 +115,8 @@ const asset rate = swapSx::get_rate("swap.sx"_n, quantity, symcode);
 
 ```json
 {
-    "fee": 50,
-    "amplifier": 20
+    "fee": 20,
+    "amplifier": 10
 }
 ```
 
@@ -225,19 +225,24 @@ Update contract parameters
 cleos push action swap.sx setparams '[{"fee": 50, "amplifier": 20}]' -p swap.sx
 ```
 
-## ACTION `tradelog`
+## ACTION `log`
 
-Notify trade to log
+Notify of trade
 
 - **authority**: `get_self()`
 
 ### params
 
-- `{symbol_code} symcode` - token symbol code
-- `{name} [contract=null]` - token contract account name (if `null` delete symbol)
+- `{name} buyer` - trader buyer account
+- `{asset} quantity` - incoming quantity
+- `{asset} rate` - outgoing rate
+- `{asset} fee` - fee paid per trade
+- `{double} trade_price` - trade price per unit
+- `{double} spot_price` - spot price per rate
+- `{double} value` - total value of trade relative to spot price symbol
 
 ### example
 
 ```bash
-cleos push action swap.sx token '["USDT", "tethertether"]' -p swap.sx
+cleos push action swap.sx log '["myaccount", "3.0000 EOS", "7.0486 USDT", "0.0060 EOS", 2.3495, 1.0119, 7.1327]' -p swap.sx
 ```
