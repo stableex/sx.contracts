@@ -1,6 +1,6 @@
 # `swap.sx`
 
-> SX Leveraged Liquidity Pools
+> SX Amplified Liquidity Pools
 
 ## Stable Tokens
 
@@ -16,11 +16,8 @@
 
 | **Pool**       | **Tokens**      |
 |----------------|-----------------|
-| `swap.sx`      | EOS, USDT
-| `eosdt.sx`     | EOS, USDT, EOSDT
-| `vigor.sx`     | EOS, USDT, VIGOR
-| `usde.sx`      | EOS, USDT, USDE
-| `stable.sx`    | EOS, USDT, USDE, EOSDT, USDB, VIGOR
+| `swap.sx`      | EOS, USDT, EOSDT
+| `stable.sx`    | EOS, USDT, EOSDT, USDB, VIGOR, USDE
 
 ## Quickstart
 
