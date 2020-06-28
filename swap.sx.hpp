@@ -217,6 +217,12 @@ public:
               const double value );
 
     /**
+     * Re-balance assets based on spot price and equal distribution of each token
+     */
+    [[eosio::action]]
+    void rebalance();
+
+    /**
      * Notify contract when any token transfer notifiers relay contract
      */
     [[eosio::on_notify("*::transfer")]]
@@ -368,7 +374,8 @@ private:
     bool is_token_exists( const symbol_code symcode );
 
     void check_is_active( const symbol_code symcode, const name contract );
-    void check_remaining_balance( const asset out );
+    void check_min_ratio( const asset out );
+    void check_max_ratio( const symbol_code symcode );
 
     double get_ratio( const symbol_code symcode );
     asset get_balance( const symbol_code symcode );
@@ -384,6 +391,7 @@ private:
     // spot prices
     void update_spot_prices();
     double get_spot_price( const symbol_code base, const symbol_code quote );
+    map<symbol_code, double> get_spot_prices( const symbol_code base );
 
     // settings
     void erase_all_tokens();
