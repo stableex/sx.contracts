@@ -13,21 +13,13 @@ double swapSx::get_ratio( const symbol_code symcode )
     return static_cast<double>(balance.amount) / token.depth.amount;
 }
 
-void swapSx::check_max_ratio( const symbol_code symcode )
-{
-    const asset balance = get_balance( symcode );
-    const asset depth = get_depth( symcode );
-
-    check( static_cast<double>(balance.amount) / depth.amount <= 5, symcode.to_string() + " balance/depth ratio cannot exceed 500%" );
-}
-
-void swapSx::check_min_ratio( const asset out )
+void swapSx::check_remaining_balance( const asset out )
 {
     const asset balance = get_balance( out.symbol.code() );
     const asset depth = get_depth( out.symbol.code() );
     const asset remaining = balance - out;
 
-    check( static_cast<double>(remaining.amount) / depth.amount >= 0.2, out.symbol.code().to_string() + " balance/depth ratio must be above 20%" );
+    check( remaining.amount >= 0, out.symbol.code().to_string() + " insufficient remaining balance" );
 }
 
 void swapSx::check_is_active( const symbol_code symcode, const name contract )

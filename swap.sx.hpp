@@ -368,8 +368,7 @@ private:
     bool is_token_exists( const symbol_code symcode );
 
     void check_is_active( const symbol_code symcode, const name contract );
-    void check_max_ratio( const symbol_code symcode );
-    void check_min_ratio( const asset out );
+    void check_remaining_balance( const asset out );
 
     double get_ratio( const symbol_code symcode );
     asset get_balance( const symbol_code symcode );

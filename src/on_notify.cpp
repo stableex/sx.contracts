@@ -36,14 +36,13 @@ void swapSx::on_transfer( const name from, const name to, const asset quantity, 
     check_is_active( in_symcode, get_first_receiver() );
     check_is_active( out_symcode, name{} );
     check( in_symcode != out_symcode, in_symcode.to_string() + " symbol code cannot be the same as quantity");
-    check_max_ratio( in_symcode );
 
     // calculate rates
     const asset fee = swapSx::get_fee( get_self(), quantity );
     const asset rate = swapSx::get_rate( get_self(), quantity, out_symcode );
 
     // validate output
-    check_min_ratio( rate );
+    check_remaining_balance( rate );
     check( rate.amount > 0, "quantity must be higher");
 
     // send transfers
@@ -66,7 +65,4 @@ void swapSx::on_transfer( const name from, const name to, const asset quantity, 
 
     swapSx::log_action log( get_self(), { get_self(), "active"_n });
     log.send( from, quantity, rate, fee, trade_price, spot_price, value );
-
-    // enforce 1.00 trades (prevents spam)
-    check( value >= 1.0, "minimum trade value must exceed 1.00 " + SPOT_PRICE_BASE.to_string() );
 }
