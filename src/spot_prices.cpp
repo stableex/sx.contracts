@@ -28,3 +28,15 @@ double swapSx::get_spot_price( const symbol_code base, const symbol_code quote )
     const vector<double> uppers = get_uppers( get_self(), base, quote );
     return uppers[0] / uppers[1];
 }
+
+map<symbol_code, double> swapSx::get_spot_prices( const symbol_code base )
+{
+    swapSx::tokens_table _tokens( get_self(), get_self().value );
+    map<symbol_code, double> spot_prices;
+
+    for ( const auto token : _tokens ) {
+        const symbol_code quote = token.sym.code();
+        spot_prices[ quote ] = get_spot_price( base, quote );
+    }
+    return spot_prices;
+}

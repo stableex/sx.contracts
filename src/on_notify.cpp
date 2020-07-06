@@ -12,15 +12,16 @@ void swapSx::on_transfer( const name from, const name to, const asset quantity, 
         "eosio.ram"_n,
         "eosio.rex"_n,
         "eosio"_n,
+
+        // admin SX accounts
+        "sx"_n,
+        "reserve.sx"_n
     };
 
-    // add/remove liquidity depth (must be sent using `sx` account)
-    if ( from == "sx"_n || to == "sx"_n ) set_balance( quantity.symbol.code() );
-    if ( from == "sx"_n ) return add_depth( quantity );
-    if ( to == "sx"_n ) return sub_depth( quantity );
-
-    // prevent invalid transfers
-    if ( from == get_self() ) check( memo == "convert" || memo == "fee", "invalid transfer");
+    // // add/remove liquidity depth (must be sent using `sx` account)
+    // if ( from == "sx"_n || to == "sx"_n ) set_balance( quantity.symbol.code() );
+    // if ( from == "sx"_n ) return add_depth( quantity );
+    // if ( to == "sx"_n ) return sub_depth( quantity );
 
     // ignore transfers
     if ( to != get_self() ) return;
@@ -36,14 +37,14 @@ void swapSx::on_transfer( const name from, const name to, const asset quantity, 
     check_is_active( in_symcode, get_first_receiver() );
     check_is_active( out_symcode, name{} );
     check( in_symcode != out_symcode, in_symcode.to_string() + " symbol code cannot be the same as quantity");
-    check_max_ratio( in_symcode );
+    // check_max_ratio( in_symcode );
 
     // calculate rates
     const asset fee = swapSx::get_fee( get_self(), quantity );
     const asset rate = swapSx::get_rate( get_self(), quantity, out_symcode );
 
     // validate output
-    check_min_ratio( rate );
+    // check_min_balance( rate );
     check( rate.amount > 0, "quantity must be higher");
 
     // send transfers

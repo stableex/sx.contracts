@@ -217,10 +217,10 @@ public:
               const double value );
 
     /**
-     * Re-balance assets based on spot price and equal distribution of each token
+     * Balance assets based on spot price to an equal value distribution of each token
      */
     [[eosio::action]]
-    void rebalance();
+    void balance();
 
     /**
      * Notify contract when any token transfer notifiers relay contract
@@ -369,21 +369,24 @@ private:
     void self_transfer( const name to, const asset quantity, const string memo );
 
     // tokens
+    void set_depth( const asset depth );
     void add_depth( const asset quantity );
     void sub_depth( const asset quantity );
+
+    void set_balance( const asset balance );
+    void add_balance( const asset quantity );
+    void sub_balance( const asset quantity );
+
     bool is_token_exists( const symbol_code symcode );
 
     void check_is_active( const symbol_code symcode, const name contract );
-    void check_min_ratio( const asset out );
-    void check_max_ratio( const symbol_code symcode );
+    void check_min_balance( const asset out );
+    // void check_min_ratio( const asset out );
+    // void check_max_ratio( const symbol_code symcode );
 
     double get_ratio( const symbol_code symcode );
     asset get_balance( const symbol_code symcode );
     asset get_depth( const symbol_code symcode );
-
-    void set_balance( const symbol_code symcode );
-    void add_balance( const asset quantity );
-    void sub_balance( const asset quantity );
 
     // volume
     void update_volume( const vector<asset> volumes, const asset fee );
@@ -395,4 +398,7 @@ private:
 
     // settings
     void erase_all_tokens();
+
+    // rebalance
+    double get_min_value( const map<symbol_code, double> spot_prices );
 };

@@ -13,6 +13,7 @@ cleos create account eosio eosio.token EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHu
 cleos create account eosio myaccount EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV
 cleos create account eosio basic EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV
 cleos create account eosio entry EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV
+cleos create account eosio reserve.sx EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV
 
 # deploy
 cleos set contract swap.sx . swap.sx.wasm swap.sx.abi
@@ -30,6 +31,12 @@ cleos push action eosio.token create '["eosio", "100000000.0000 USDT"]' -p eosio
 cleos push action eosio.token issue '["eosio", "5000000.0000 USDT", "init"]' -p eosio
 cleos transfer eosio myaccount "50000.0000 USDT" "init"
 cleos transfer eosio sx "50000.0000 USDT" "init"
+
+# create EOS token
+cleos push action eosio.token create '["eosio", "100000000.0000 EOS"]' -p eosio.token
+cleos push action eosio.token issue '["eosio", "5000000.0000 EOS", "init"]' -p eosio
+cleos transfer eosio myaccount "50000.0000 EOS" "init"
+cleos transfer eosio sx "50000.0000 EOS" "init"
 
 # create A token
 cleos push action eosio.token create '["eosio", "100000000.0000 A"]' -p eosio.token

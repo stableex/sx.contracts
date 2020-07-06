@@ -8,4 +8,4 @@
 #include "src/volume.cpp"
 #include "src/spot_prices.cpp"
 #include "src/log.cpp"
-#include "src/balances.cpp"
+#include "src/balance.cpp"
