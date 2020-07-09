@@ -11,9 +11,6 @@
 using namespace eosio;
 using namespace std;
 
-// settings
-static constexpr symbol_code SPOT_PRICE_BASE = symbol_code{"USDT"};
-
 class [[eosio::contract("swap.sx")]] swapSx : public contract {
 public:
     using contract::contract;
@@ -22,20 +19,23 @@ public:
      * ## TABLE `settings`
      *
      * - `{int64_t} fee` - trading fee (pips 1/100 of 1%)
-     * - `{int64_t} amplifier` - liquidity pool amplifier
+     * - `{double} amplifier` - liquidity pool amplifier
+     * - `{symbol_code} base` - base symbol for quote
      *
      * ### example
      *
      * ```json
      * {
      *   "fee": 50,
-     *   "amplifier": 20
+     *   "amplifier": 20,
+     *   "base": "EOS"
      * }
      * ```
      */
     struct [[eosio::table("settings")]] params {
         int64_t             fee;
-        int64_t             amplifier;
+        double              amplifier;
+        symbol_code         base;
     };
     typedef eosio::singleton< "settings"_n, params > settings;
 
@@ -157,7 +157,7 @@ public:
      * ### example
      *
      * ```bash
-     * cleos push action swap.sx setparams '[{"fee": 50, "amplifier": 20}]' -p swap.sx
+     * cleos push action swap.sx setparams '[{"fee": 50, "amplifier": 20, "base": "EOS"}]' -p swap.sx
      * ```
      */
     [[eosio::action]]
@@ -215,12 +215,6 @@ public:
               const double trade_price,
               const double spot_price,
               const double value );
-
-    /**
-     * Balance assets based on spot price to an equal value distribution of each token
-     */
-    [[eosio::action]]
-    void balance();
 
     /**
      * Notify contract when any token transfer notifiers relay contract
@@ -380,11 +374,8 @@ private:
     bool is_token_exists( const symbol_code symcode );
 
     void check_is_active( const symbol_code symcode, const name contract );
-    void check_min_balance( const asset out );
-    // void check_min_ratio( const asset out );
-    // void check_max_ratio( const symbol_code symcode );
+    void check_remaining_balance( const asset out );
 
-    double get_ratio( const symbol_code symcode );
     asset get_balance( const symbol_code symcode );
     asset get_depth( const symbol_code symcode );
 

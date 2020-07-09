@@ -14,10 +14,12 @@ void swapSx::setparams( const optional<swapSx::params> params )
     }
     _docs.get_or_create( get_self() );
 
-    check( params->fee <= 50, "fee cannot be greater than 0.5%");
+    check( params->fee <= 500, "fee cannot be greater than 5%");
     check( params->fee >= 0, "fee must be positive");
-    check( params->amplifier <= 100, "amplifier cannot be greater than 100x");
+    check( params->amplifier <= 200, "amplifier cannot be greater than 200x");
     check( params->amplifier >= 0, "amplifier must be positive");
+    check( params->base.is_valid(), "base symbol is not valid");
+    check( params->base.raw(), "base symbol is empty");
 
     // cannot modify amplifier once set
     if ( _settings.exists() ) check( _settings.get().amplifier == params->amplifier, "amplifier cannot be modified");

@@ -47,7 +47,8 @@ void swapSx::sub_balance( const asset quantity )
 
     _tokens.modify( itr, same_payer, [&]( auto & row ) {
         row.balance -= quantity;
-        // check(row.balance.amount >= 0, "balance overdrawn balance");
+        // balance (initial pegged balance) can go in negative
+        // price formula will adjusts accordingly
     });
 }
 
@@ -96,40 +97,15 @@ bool swapSx::is_token_exists( const symbol_code symcode )
     return ( _tokens.find( symcode.raw() ) != _tokens.end() );
 }
 
-double swapSx::get_ratio( const symbol_code symcode )
+void swapSx::check_remaining_balance( const asset out )
 {
-    // calculate ratio between depth & balance
-    swapSx::tokens_table _tokens( get_self(), get_self().value );
-    auto token = _tokens.get( symcode.raw(), "[symcode] token does not exist");
-    const asset balance = swapSx::get_balance( symcode );
-    return static_cast<double>(balance.amount) / token.depth.amount;
-}
-
-// void swapSx::check_max_ratio( const symbol_code symcode )
-// {
-//     const asset balance = get_balance( symcode );
-//     const asset depth = get_depth( symcode );
-
-//     check( static_cast<double>(balance.amount) / depth.amount <= 5, symcode.to_string() + " balance/depth ratio cannot exceed 500%" );
-// }
-
-void swapSx::check_min_balance( const asset out )
-{
-    const asset balance = swapSx::get_balance( out.symbol.code() );
+    const symbol_code symcode = out.symbol.code();
+    const name contract = get_contract( get_self(), symcode );
+    const asset balance = token::get_balance( contract, get_self(), symcode );
     const asset remaining = balance - out;
 
-    check( remaining.amount >= 0, out.symbol.code().to_string() + " insufficient remaining balance" );
+    check( remaining.amount >= 0, get_self().to_string() + " has insufficient balance to convert " + out.to_string() );
 }
-
-// void swapSx::check_min_ratio( const asset out )
-// {
-//     const asset balance = get_balance( out.symbol.code() );
-//     // const asset depth = get_depth( out.symbol.code() );
-//     const asset remaining = balance - out;
-
-//     check( remaining.amount >= 0, out.symbol.code().to_string() + " insufficient remaining balance" );
-//     // check( static_cast<double>(remaining.amount) / depth.amount >= 0.2, out.symbol.code().to_string() + " balance/depth ratio must be above 20%" );
-// }
 
 void swapSx::check_is_active( const symbol_code symcode, const name contract )
 {

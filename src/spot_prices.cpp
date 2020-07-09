@@ -2,21 +2,23 @@ void swapSx::update_spot_prices()
 {
     swapSx::tokens_table _tokens( get_self(), get_self().value );
     swapSx::spotprices_table _spotprices( get_self(), get_self().value );
+    swapSx::settings _settings( get_self(), get_self().value );
+    const symbol_code base = _settings.get().base;
     auto spotprices = _spotprices.get_or_default();
 
     // ignore if base symbol does not exists
-    if ( !is_token_exists( SPOT_PRICE_BASE ) ) return;
+    if ( !is_token_exists( base ) ) return;
 
     // spot prices
     spotprices.quotes = map<symbol_code, double>{};
     for ( const auto token : _tokens ) {
         const symbol_code quote = token.sym.code();
-        spotprices.quotes[quote] = get_spot_price( SPOT_PRICE_BASE, quote );
+        spotprices.quotes[quote] = get_spot_price( base, quote );
     }
 
     // save table
     spotprices.last_modified = current_time_point();
-    spotprices.base = SPOT_PRICE_BASE;
+    spotprices.base = base;
     _spotprices.set( spotprices, get_self() );
 }
 

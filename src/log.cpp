@@ -7,6 +7,4 @@ void swapSx::log( const name buyer,
                   const double value )
 {
     require_auth( get_self() );
-
-    if ( is_account("log.sx"_n) ) require_recipient("log.sx"_n);
 }
