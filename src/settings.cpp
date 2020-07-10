@@ -55,6 +55,7 @@ void swapSx::token( const symbol_code symcode, const optional<name> contract )
         row.contract = *contract;
         row.balance = balance;
         row.depth = balance;
+        row.reserve = balance;
     });
 }
 

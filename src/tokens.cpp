@@ -22,6 +22,17 @@ void swapSx::sub_balance( const asset quantity )
     });
 }
 
+void swapSx::set_reserve( const symbol_code symcode )
+{
+    swapSx::tokens_table _tokens( get_self(), get_self().value );
+    auto itr = _tokens.find( symcode.raw() );
+    if ( itr == _tokens.end() ) return;
+
+    _tokens.modify( itr, same_payer, [&]( auto & row ) {
+        row.reserve = token::get_balance( get_contract( get_self(), symcode ), get_self(), symcode );
+    });
+}
+
 bool swapSx::is_token_exists( const symbol_code symcode )
 {
     swapSx::tokens_table _tokens( get_self(), get_self().value );

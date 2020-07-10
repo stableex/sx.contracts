@@ -7,4 +7,8 @@ void swapSx::log( const name buyer,
                   const double value )
 {
     require_auth( get_self() );
+
+    // post trade - not used for price logic
+    set_reserve( rate.symbol.code() );
+    set_reserve( quantity.symbol.code() );
 }

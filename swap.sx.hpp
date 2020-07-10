@@ -67,6 +67,7 @@ public:
      * - `{contract} contract` - token contract account name
      * - `{asset} balance` - current balance
      * - `{asset} depth` - liquidity depth
+     * - `{asset} reserve` - liquidity reserve
      *
      * ### example
      *
@@ -75,7 +76,8 @@ public:
      *     "sym": "4,USDT",
      *     "contract": "tethertether",
      *     "balance": "10000.0000 USDT",
-     *     "depth": "10000.0000 USDT"
+     *     "depth": "10000.0000 USDT",
+     *     "reserve": "10000.0000 USDT"
      * }
      * ```
      */
@@ -84,6 +86,7 @@ public:
         name                        contract;
         asset                       balance;
         asset                       depth;
+        asset                       reserve;
 
         uint64_t primary_key() const { return sym.code().raw(); }
     };
@@ -369,6 +372,7 @@ private:
     // tokens
     void add_balance( const asset quantity );
     void sub_balance( const asset quantity );
+    void set_reserve( const symbol_code symcode );
 
     bool is_token_exists( const symbol_code symcode );
 

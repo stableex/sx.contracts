@@ -15,9 +15,10 @@ void swapSx::on_transfer( const name from, const name to, const asset quantity, 
     };
 
     // ignore transfers
-    if ( memo == get_self().to_string() ) return;
-    if ( to != get_self() ) return;
-    if ( ignore.find( from ) != ignore.end() ) return;
+    if ( memo == get_self().to_string() || to != get_self() || ignore.find( from ) != ignore.end() ) {
+        set_reserve( quantity.symbol.code() );
+        return;
+    }
 
     // check if contract maintenance is ongoing
     swapSx::settings _settings( get_self(), get_self().value );
