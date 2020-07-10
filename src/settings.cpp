@@ -20,6 +20,7 @@ void swapSx::setparams( const optional<swapSx::params> params )
     check( params->amplifier >= 0, "amplifier must be positive");
     check( params->base.is_valid(), "base symbol is not valid");
     check( params->base.raw(), "base symbol is empty");
+    if ( params->fee_account.value ) check(is_account(params->fee_account), "fee account does not exists");
 
     // cannot modify amplifier once set
     if ( _settings.exists() ) check( _settings.get().amplifier == params->amplifier, "amplifier cannot be modified");

@@ -22,6 +22,7 @@ void swapSx::on_transfer( const name from, const name to, const asset quantity, 
     // check if contract maintenance is ongoing
     swapSx::settings _settings( get_self(), get_self().value );
     check( _settings.exists(), "contract is currently disabled for maintenance");
+    auto settings = _settings.get();
 
     // validate input
     const symbol_code in_symcode = quantity.symbol.code();
@@ -40,7 +41,7 @@ void swapSx::on_transfer( const name from, const name to, const asset quantity, 
 
     // send transfers
     self_transfer( from, rate, "convert" );
-    if ( fee.amount ) self_transfer( "fee.sx"_n, fee, "fee" );
+    if ( settings.fee_account && fee.amount ) self_transfer( settings.fee_account, fee, "fee" );
 
     // post transfer
     update_volume( vector<asset>{ quantity, rate }, fee );
@@ -53,7 +54,7 @@ void swapSx::on_transfer( const name from, const name to, const asset quantity, 
 
     // trade log
     const double trade_price = asset_to_double( rate ) / asset_to_double( quantity );
-    const double spot_price = get_spot_price( _settings.get().base, rate.symbol.code() );
+    const double spot_price = get_spot_price( settings.base, rate.symbol.code() );
     const double value = spot_price * asset_to_double( rate );
 
     swapSx::log_action log( get_self(), { get_self(), "active"_n });

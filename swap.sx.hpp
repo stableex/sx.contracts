@@ -19,6 +19,7 @@ public:
      * ## TABLE `settings`
      *
      * - `{int64_t} fee` - trading fee (pips 1/100 of 1%)
+     * - `{name} fee_account` - fees redirected to account
      * - `{double} amplifier` - liquidity pool amplifier
      * - `{symbol_code} base` - base symbol for quote
      *
@@ -26,14 +27,16 @@ public:
      *
      * ```json
      * {
-     *   "fee": 50,
+     *   "fee": 20,
+     *   "fee_account": "fee.sx",
      *   "amplifier": 20,
-     *   "base": "EOS"
+     *   "base": "USDT"
      * }
      * ```
      */
     struct [[eosio::table("settings")]] params {
         int64_t             fee;
+        name                fee_account;
         double              amplifier;
         symbol_code         base;
     };
@@ -127,11 +130,11 @@ public:
      *
      * ```json
      * {
-     *   "last_modified": "2020-06-03T12:30:00",
-     *   "base": "EOS",
+     *   "last_modified": "2020-07-10T15:17:23",
+     *   "base": "USDT",
      *   "quotes": [
-     *     {"key": "EOSDT", "value": 0.3636},
-     *     {"key": "USDT", "value": 0.3636}
+     *     {"key": "EOS", "value": 2.6098},
+     *     {"key": "USDT", "value": 1.0000}
      *   ]
      * }
      * ```
