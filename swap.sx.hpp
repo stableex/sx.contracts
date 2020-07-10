@@ -232,7 +232,7 @@ public:
      *
      * ### params
      *
-     * - `{name} contract` - contract account
+     * - `{name} code` - SX contract account
      * - `{asset} quantity` - input quantity
      * - `{symbol_code} symcode` - out symbol code
      *
@@ -245,18 +245,18 @@ public:
      * //=> "2.7712 USDT"
      * ```
      */
-    static asset get_rate( const name contract, const asset quantity, const symbol_code symcode )
+    static asset get_rate( const name code, const asset quantity, const symbol_code symcode )
     {
-        const asset fee = swapSx::get_fee( contract, quantity );
-        return swapSx::get_price( contract, quantity - fee, symcode );
+        const asset fee = swapSx::get_fee( code, quantity );
+        return swapSx::get_price( code, quantity - fee, symcode );
     }
 
     // convert
-    static vector<double> get_uppers( const name contract, const symbol_code base_symcode, const symbol_code quote_symcode )
+    static vector<double> get_uppers( const name code, const symbol_code base_symcode, const symbol_code quote_symcode )
     {
         // settings
-        swapSx::settings _settings( contract, contract.value );
-        swapSx::tokens_table _tokens( contract, contract.value );
+        swapSx::settings _settings( code, code.value );
+        swapSx::tokens_table _tokens( code, code.value );
         const tokens_row base = _tokens.get( base_symcode.raw(), "base symbol code does not exists" );
         const tokens_row quote = _tokens.get( quote_symcode.raw(), "quote symbol code does not exists" );
         const int64_t amplifier = _settings.get().amplifier;
@@ -276,26 +276,26 @@ public:
         return vector<double>{ base_upper, quote_upper };
     }
 
-    static asset get_price( const name contract, const asset quantity, const symbol_code symcode )
+    static asset get_price( const name code, const asset quantity, const symbol_code symcode )
     {
         // quantity input
         const double in_amount = swapSx::asset_to_double( quantity );
 
         // upper limits
-        const vector<double> uppers = swapSx::get_uppers( contract, quantity.symbol.code(), symcode );
+        const vector<double> uppers = swapSx::get_uppers( code, quantity.symbol.code(), symcode );
         const double base_upper = uppers[0];
         const double quote_upper = uppers[1];
 
         // Bancor V1 Formula
         const double out = swapSx::get_bancor_output( base_upper, quote_upper, in_amount );
 
-        return swapSx::double_to_asset( out, get_symbol( contract, symcode ));
+        return swapSx::double_to_asset( out, get_symbol( code, symcode ));
     }
 
-    static asset get_fee( const name contract, const asset quantity )
+    static asset get_fee( const name code, const asset quantity )
     {
         // settings
-        swapSx::settings _settings( contract, contract.value );
+        swapSx::settings _settings( code, code.value );
         const int64_t fee = _settings.get().fee;
 
         // fee colleceted from incoming transfer (in basis points 1/100 of 1% )
@@ -313,6 +313,7 @@ public:
         if ( quantity.amount == 0 ) return 0.0;
         return quantity.amount / pow(10, quantity.symbol.precision());
     }
+
     static asset double_to_asset( const double amount, const symbol sym )
     {
         return asset{ static_cast<int64_t>(amount * pow(10, sym.precision())), sym };
@@ -334,19 +335,19 @@ public:
     }
 
     // tokens
-    static name get_contract( const name contract, const symbol_code symcode )
+    static name get_contract( const name code, const symbol_code symcode )
     {
-        return get_extended_symbol( contract, symcode ).get_contract();
+        return get_extended_symbol( code, symcode ).get_contract();
     }
 
-    static symbol get_symbol( const name contract, const symbol_code symcode )
+    static symbol get_symbol( const name code, const symbol_code symcode )
     {
-        return get_extended_symbol( contract, symcode ).get_symbol();
+        return get_extended_symbol( code, symcode ).get_symbol();
     }
 
-    static extended_symbol get_extended_symbol( const name contract, const symbol_code symcode )
+    static extended_symbol get_extended_symbol( const name code, const symbol_code symcode )
     {
-        swapSx::tokens_table _tokens( contract, contract.value );
+        swapSx::tokens_table _tokens( code, code.value );
         auto token = _tokens.find( symcode.raw() );
         check( token != _tokens.end(), symcode.to_string() + " cannot find token");
         return extended_symbol{ token->sym, token->contract };
@@ -363,11 +364,6 @@ private:
     void self_transfer( const name to, const asset quantity, const string memo );
 
     // tokens
-    void set_depth( const asset depth );
-    void add_depth( const asset quantity );
-    void sub_depth( const asset quantity );
-
-    void set_balance( const asset balance );
     void add_balance( const asset quantity );
     void sub_balance( const asset quantity );
 
@@ -375,9 +371,6 @@ private:
 
     void check_is_active( const symbol_code symcode, const name contract );
     void check_remaining_balance( const asset out );
-
-    asset get_balance( const symbol_code symcode );
-    asset get_depth( const symbol_code symcode );
 
     // volume
     void update_volume( const vector<asset> volumes, const asset fee );
@@ -389,7 +382,4 @@ private:
 
     // settings
     void erase_all_tokens();
-
-    // rebalance
-    double get_min_value( const map<symbol_code, double> spot_prices );
 };
