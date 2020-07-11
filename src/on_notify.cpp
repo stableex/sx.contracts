@@ -46,15 +46,7 @@ void swapSx::on_transfer( const name from, const name to, const asset quantity, 
     // update balances `on_notify` inline transaction
     // prevents re-entry exploit
     sub_balance( rate );
-
-    // handle fee externally
-    if ( settings.fee_account ) {
-        if ( fee.amount ) self_transfer( settings.fee_account, fee, "fee" );
-        add_balance( quantity - fee );
-    // handle fee internally
-    } else {
-        add_balance( quantity );
-    }
+    add_balance( quantity );
 
     // log trade
     const double trade_price = asset_to_double( rate ) / asset_to_double( quantity );

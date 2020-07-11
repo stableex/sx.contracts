@@ -14,13 +14,12 @@ void swapSx::setparams( const optional<swapSx::params> params )
     }
     _docs.get_or_create( get_self() );
 
-    check( params->fee <= 500, "fee cannot be greater than 5%");
+    check( params->fee <= 300, "fee cannot be greater than 3%");
     check( params->fee >= 0, "fee must be positive");
-    check( params->amplifier <= 200, "amplifier cannot be greater than 200x");
+    check( params->amplifier <= 100, "amplifier cannot be greater than 100x");
     check( params->amplifier >= 0, "amplifier must be positive");
     check( params->base.is_valid(), "base symbol is not valid");
     check( params->base.raw(), "base symbol is empty");
-    if ( params->fee_account.value ) check(is_account(params->fee_account), "fee account does not exists");
 
     // cannot modify amplifier once set
     if ( _settings.exists() ) check( _settings.get().amplifier == params->amplifier, "amplifier cannot be modified");
@@ -50,7 +49,7 @@ void swapSx::token( const symbol_code symcode, const optional<name> contract )
     const asset balance = token::get_balance( *contract, get_self(), symcode );
     if ( contract ) check( supply.amount > 0, "invalid supply");
 
-    _tokens.emplace( get_self(), [&]( auto& row ){
+    _tokens.emplace( get_self(), [&]( auto& row ) {
         row.sym = supply.symbol;
         row.contract = *contract;
         row.balance = balance;

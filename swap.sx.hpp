@@ -19,8 +19,7 @@ public:
      * ## TABLE `settings`
      *
      * - `{int64_t} fee` - trading fee (pips 1/100 of 1%)
-     * - `{name} fee_account` - fees redirected to account
-     * - `{double} amplifier` - liquidity pool amplifier
+     * - `{int64_t} amplifier` - liquidity pool amplifier
      * - `{symbol_code} base` - base symbol for quote
      *
      * ### example
@@ -28,7 +27,6 @@ public:
      * ```json
      * {
      *   "fee": 20,
-     *   "fee_account": "fee.sx",
      *   "amplifier": 20,
      *   "base": "USDT"
      * }
@@ -36,8 +34,7 @@ public:
      */
     struct [[eosio::table("settings")]] params {
         int64_t             fee;
-        name                fee_account;
-        double              amplifier;
+        int64_t             amplifier;
         symbol_code         base;
     };
     typedef eosio::singleton< "settings"_n, params > settings;
