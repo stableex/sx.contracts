@@ -42,18 +42,21 @@ void swapSx::on_transfer( const name from, const name to, const asset quantity, 
 
     // send transfers
     self_transfer( from, rate, "convert" );
-    if ( settings.fee_account && fee.amount ) self_transfer( settings.fee_account, fee, "fee" );
-
-    // post transfer
-    update_volume( vector<asset>{ quantity, rate }, fee );
 
     // update balances `on_notify` inline transaction
     // prevents re-entry exploit
-    add_balance( quantity - fee );
     sub_balance( rate );
-    update_spot_prices();
 
-    // trade log
+    // handle fee externally
+    if ( settings.fee_account ) {
+        if ( fee.amount ) self_transfer( settings.fee_account, fee, "fee" );
+        add_balance( quantity - fee );
+    // handle fee internally
+    } else {
+        add_balance( quantity );
+    }
+
+    // log trade
     const double trade_price = asset_to_double( rate ) / asset_to_double( quantity );
     const double spot_price = get_spot_price( settings.base, rate.symbol.code() );
     const double value = spot_price * asset_to_double( rate );

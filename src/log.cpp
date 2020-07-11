@@ -11,4 +11,6 @@ void swapSx::log( const name buyer,
     // post trade - not used for price logic
     set_reserve( rate.symbol.code() );
     set_reserve( quantity.symbol.code() );
+    update_volume( vector<asset>{ quantity, rate }, fee );
+    update_spot_prices();
 }
