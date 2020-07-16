@@ -6,6 +6,7 @@ cleos wallet unlock --password $(cat ~/eosio-wallet/.pass)
 # create accounts
 cleos create account eosio sx EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV
 cleos create account eosio swap.sx EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV
+cleos create account eosio stable.sx EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV
 cleos create account eosio fee.sx EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV
 cleos create account eosio log.sx EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV
 cleos create account eosio registry.sx EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV
@@ -17,12 +18,14 @@ cleos create account eosio reserve.sx EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuG
 
 # deploy
 cleos set contract swap.sx . swap.sx.wasm swap.sx.abi
+cleos set contract stable.sx . swap.sx.wasm swap.sx.abi
 cleos set contract entry . entry.wasm entry.abi
 cleos set contract basic . basic.wasm basic.abi
 cleos set contract eosio.token . eosio.token.wasm eosio.token.abi
 
 # permission
 cleos set account permission swap.sx active --add-code
+cleos set account permission stable.sx active --add-code
 cleos set account permission basic active --add-code
 cleos set account permission entry active --add-code
 
