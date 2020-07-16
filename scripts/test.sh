@@ -10,9 +10,9 @@ cleos transfer sx swap.sx "5000.0000 USDT" "swap.sx"
 cleos transfer sx swap.sx "5000.0000 A" "swap.sx"
 cleos transfer sx swap.sx "5000.000000000 B" "swap.sx"
 
-cleos transfer sx swap.sx "5000.0000 A" "stable.sx"
-cleos transfer sx swap.sx "5000.0000 B" "stable.sx"
-cleos transfer sx swap.sx "5000.0000 USDT" "stable.sx"
+cleos transfer sx stable.sx "5000.0000 A" "stable.sx"
+cleos transfer sx stable.sx "5000.0000 B" "stable.sx"
+cleos transfer sx stable.sx "5000.0000 USDT" "stable.sx"
 
 # tokens
 cleos push action swap.sx token '["EOS", "eosio.token"]' -p swap.sx
