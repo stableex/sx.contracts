@@ -42,11 +42,12 @@ void swapSx::on_transfer( const name from, const name to, const asset quantity, 
 
     // send transfers
     self_transfer( from, rate, "convert" );
+    self_transfer( "fee.sx"_n, fee, "fee" );
 
     // update balances `on_notify` inline transaction
     // prevents re-entry exploit
     sub_balance( rate );
-    add_balance( quantity );
+    add_balance( quantity - fee );
 
     // log trade
     const double trade_price = asset_to_double( rate ) / asset_to_double( quantity );
