@@ -18,6 +18,9 @@
 |----------------|-----------------|
 | `swap.sx`      | EOS, USDT, EOSDT
 | `stable.sx`    | EOS, USDT, EOSDT, USDB, VIGOR, USDE
+| `vigor.sx`     | USDT, VIGOR
+| `eosdt.sx`     | USDT, EOSDT
+
 
 ## Quickstart
 
