@@ -16,10 +16,7 @@
 
 | **Pool**       | **Tokens**      |
 |----------------|-----------------|
-| `swap.sx`      | EOS, USDT, EOSDT
-| `stable.sx`    | EOS, USDT, EOSDT, USDB, VIGOR, USDE
-| `vigor.sx`     | USDT, VIGOR
-| `eosdt.sx`     | USDT, EOSDT
+| `stable.sx`    | USDT, EOSDT, USDB, VIGOR, USDE, USN
 
 
 ## Quickstart
