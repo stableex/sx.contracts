@@ -11,6 +11,7 @@
 | USDB (Bancor)       | https://usdb.peg.network    |
 | USDE (Pizza)	  	  | https://pizza.live          |
 | VIGOR     	  	  | https://vigor.ai            |
+| USN     	  	      | https://danchor.io          |
 
 ## Liquidity Pools
 
