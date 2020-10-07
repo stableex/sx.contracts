@@ -124,7 +124,7 @@ const asset rate = swapSx::get_rate("swap.sx"_n, quantity, symcode);
 ## TABLE `tokens`
 
 - `{symbol} sym` -  token symbol
-- `{contract} contract` - token contract account name
+- `{name} contract` - token contract account name
 - `{asset} balance` - current balance
 - `{asset} depth` - liquidity depth
 
@@ -164,7 +164,7 @@ const asset rate = swapSx::get_rate("swap.sx"_n, quantity, symcode);
 ## TABLE `spotprices`
 
 - `{time_point_sec} last_modified` - last modified timestamp
-- `{symbol_code} fees` - base symbol code
+- `{symbol_code} base` - base symbol code
 - `{map<symbol_code, double>} quotes` - quotes prices calculated relative to base
 
 ### example
