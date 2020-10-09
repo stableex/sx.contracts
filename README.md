@@ -57,6 +57,18 @@ const asset amount_out = swapSx::get_amount_out( contract, amount_in, symcode_ou
 // => "2.7328 USDT"
 ```
 
+### `tokens` @ smart contract
+
+```c++
+swapSx::tokens _tokens( "swap.sx"_n, "swap.sx"_n.value );
+for ( const auto token : _tokens ) {
+    token.sym;
+    // => "4,USDT"
+    token.contract;
+    // => "tethertether"
+}
+```
+
 ## Table of Content
 
 - [STATIC `get_amount_out`](#static-get_amount_out)

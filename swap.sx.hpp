@@ -150,8 +150,6 @@ public:
     [[eosio::action]]
     void clear();
 
-
-
     /**
      * ## STATIC `get_amount_out`
      *
