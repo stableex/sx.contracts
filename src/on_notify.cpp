@@ -12,7 +12,6 @@ void swapSx::on_transfer( const name from, const name to, const asset quantity, 
     // ignore transfers
     if ( memo == get_self().to_string() || to != get_self() || ignore.find( from ) != ignore.end() ) {
         set_reserve( quantity.symbol.code() );
-        set_virtual_reserve( quantity.symbol.code() );
         return;
     }
 
