@@ -36,6 +36,10 @@ void swapSx::set_reserve( const symbol_code symcode )
 void swapSx::set_virtual_reserve( const symbol_code symcode )
 {
     swapSx::tokens _tokens( get_self(), get_self().value );
+    swapSx::settings _settings( get_self(), get_self().value );
+
+    check(_settings.exists(), "settings are not initialized");
+
     auto itr = _tokens.find( symcode.raw() );
     if ( itr == _tokens.end() ) return;
 
