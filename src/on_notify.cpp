@@ -6,17 +6,13 @@ void swapSx::on_transfer( const name from, const name to, const asset quantity, 
 
     // ignore transfers
     const set<name> ignore = set<name>{
-        // EOSIO system accounts
-        "eosio.stake"_n,
-        "eosio.names"_n,
         "eosio.ram"_n,
-        "eosio.rex"_n,
-        "eosio"_n,
     };
 
     // ignore transfers
     if ( memo == get_self().to_string() || to != get_self() || ignore.find( from ) != ignore.end() ) {
         set_reserve( quantity.symbol.code() );
+        set_virtual_reserve( quantity.symbol.code() );
         return;
     }
 
@@ -33,27 +29,30 @@ void swapSx::on_transfer( const name from, const name to, const asset quantity, 
     check( in_symcode != out_symcode, in_symcode.to_string() + " symbol code cannot be the same as quantity");
 
     // calculate rates
-    const asset fee = swapSx::get_fee( get_self(), quantity );
-    const asset rate = swapSx::get_rate( get_self(), quantity, out_symcode );
+    const asset reserve_in = get_upper( in_symcode );
+    const asset reserve_out = get_upper( out_symcode );
+    const asset amount_out = uniswap::get_amount_out( quantity, reserve_in, reserve_out, settings.fee );
+
+    // approximate fee
+    const asset fee = quantity * settings.fee / 10000;
 
     // validate output
-    check( rate.amount > 0, "quantity must be higher");
-    check_remaining_balance( rate );
+    check( amount_out.amount > 0, "quantity must be higher");
+    check_remaining_balance( amount_out );
 
     // send transfers
-    self_transfer( from, rate, "convert" );
-    self_transfer( "fee.sx"_n, fee, "fee" );
+    self_transfer( from, amount_out, "convert" );
 
     // update balances `on_notify` inline transaction
     // prevents re-entry exploit
-    sub_balance( rate );
-    add_balance( quantity - fee );
+    sub_balance( amount_out );
+    add_balance( quantity );
 
-    // log trade
-    const double trade_price = asset_to_double( rate ) / asset_to_double( quantity );
-    const double spot_price = get_spot_price( settings.base, rate.symbol.code() );
-    const double value = spot_price * asset_to_double( rate );
+    // set virtual reserves - not used for price logic
+    // eliminates having to calculate `get_upper` for each token
+    set_virtual_reserve( in_symcode );
+    set_virtual_reserve( out_symcode );
 
-    swapSx::log_action log( get_self(), { get_self(), "active"_n });
-    log.send( from, quantity, rate, fee, trade_price, spot_price, value );
+    swapSx::swaplog_action swaplog( get_self(), { get_self(), "active"_n });
+    swaplog.send( from, quantity, amount_out, fee );
 }

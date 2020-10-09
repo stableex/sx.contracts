@@ -1,6 +1,6 @@
 void swapSx::add_balance( const asset quantity )
 {
-    swapSx::tokens_table _tokens( get_self(), get_self().value );
+    swapSx::tokens _tokens( get_self(), get_self().value );
     auto itr = _tokens.find( quantity.symbol.code().raw() );
     if ( itr == _tokens.end() ) return;
 
@@ -11,7 +11,7 @@ void swapSx::add_balance( const asset quantity )
 
 void swapSx::sub_balance( const asset quantity )
 {
-    swapSx::tokens_table _tokens( get_self(), get_self().value );
+    swapSx::tokens _tokens( get_self(), get_self().value );
     auto itr = _tokens.find( quantity.symbol.code().raw() );
     if ( itr == _tokens.end() ) return;
 
@@ -24,7 +24,7 @@ void swapSx::sub_balance( const asset quantity )
 
 void swapSx::set_reserve( const symbol_code symcode )
 {
-    swapSx::tokens_table _tokens( get_self(), get_self().value );
+    swapSx::tokens _tokens( get_self(), get_self().value );
     auto itr = _tokens.find( symcode.raw() );
     if ( itr == _tokens.end() ) return;
 
@@ -33,9 +33,20 @@ void swapSx::set_reserve( const symbol_code symcode )
     });
 }
 
+void swapSx::set_virtual_reserve( const symbol_code symcode )
+{
+    swapSx::tokens _tokens( get_self(), get_self().value );
+    auto itr = _tokens.find( symcode.raw() );
+    if ( itr == _tokens.end() ) return;
+
+    _tokens.modify( itr, same_payer, [&]( auto & row ) {
+        row.virtual_reserve = get_upper( symcode );
+    });
+}
+
 bool swapSx::is_token_exists( const symbol_code symcode )
 {
-    swapSx::tokens_table _tokens( get_self(), get_self().value );
+    swapSx::tokens _tokens( get_self(), get_self().value );
     return ( _tokens.find( symcode.raw() ) != _tokens.end() );
 }
 
@@ -51,7 +62,7 @@ void swapSx::check_remaining_balance( const asset out )
 
 void swapSx::check_is_active( const symbol_code symcode, const name contract )
 {
-    swapSx::tokens_table _tokens( get_self(), get_self().value );
+    swapSx::tokens _tokens( get_self(), get_self().value );
     auto token = _tokens.find( symcode.raw() );
     check( token != _tokens.end(), symcode.to_string() + " token not available");
 

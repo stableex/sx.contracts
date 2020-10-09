@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # settings
-cleos push action swap.sx setparams '[{"fee": 20, "amplifier": 20, "base": "USDT"}]' -p swap.sx
-cleos push action stable.sx setparams '[{"fee": 20, "amplifier": 100, "base": "USDT"}]' -p stable.sx
+cleos push action swap.sx setparams '[{"fee": 20, "amplifier": 20}]' -p swap.sx
+cleos push action stable.sx setparams '[{"fee": 20, "amplifier": 100}]' -p stable.sx
 
 # add initial liquidity (added manually by including ignored memo)
 cleos transfer sx swap.sx "2000.0000 EOS" "swap.sx"

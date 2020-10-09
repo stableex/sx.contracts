@@ -3,23 +3,18 @@ void swapSx::setparams( const optional<swapSx::params> params )
 {
     require_auth( get_self() );
     swapSx::settings _settings( get_self(), get_self().value );
-    swapSx::docs _docs( get_self(), get_self().value );
 
     // clear table if params is `null`
     if ( !params ) {
-        _docs.remove();
         _settings.remove();
         erase_all_tokens();
         return;
     }
-    _docs.get_or_create( get_self() );
 
     check( params->fee <= 300, "fee cannot be greater than 3%");
     check( params->fee >= 0, "fee must be positive");
     check( params->amplifier <= 500, "amplifier cannot be greater than 500x");
     check( params->amplifier >= 0, "amplifier must be positive");
-    check( params->base.is_valid(), "base symbol is not valid");
-    check( params->base.raw(), "base symbol is empty");
 
     // cannot modify amplifier once set
     if ( _settings.exists() ) check( _settings.get().amplifier == params->amplifier, "amplifier cannot be modified");
@@ -32,7 +27,7 @@ void swapSx::token( const symbol_code symcode, const optional<name> contract )
 {
     require_auth( get_self() );
 
-    swapSx::tokens_table _tokens( get_self(), get_self().value );
+    swapSx::tokens _tokens( get_self(), get_self().value );
     auto itr = _tokens.find( symcode.raw() );
 
     // delete if contract is null
@@ -56,11 +51,14 @@ void swapSx::token( const symbol_code symcode, const optional<name> contract )
         row.depth = balance;
         row.reserve = balance;
     });
+
+    // define virtual reserve to prevent it from being defined as 0
+    set_virtual_reserve( symcode );
 }
 
 void swapSx::erase_all_tokens()
 {
-    swapSx::tokens_table _tokens( get_self(), get_self().value );
+    swapSx::tokens _tokens( get_self(), get_self().value );
 
     set<symbol_code> tokens;
     for ( auto row : _tokens ) {

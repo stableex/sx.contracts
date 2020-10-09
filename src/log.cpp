@@ -1,16 +1,15 @@
-void swapSx::log( const name buyer,
-                  const asset quantity,
-                  const asset rate,
-                  const asset fee,
-                  const double trade_price,
-                  const double spot_price,
-                  const double value )
+void swapSx::swaplog( const name buyer,
+                      const asset amount_in,
+                      const asset amount_out,
+                      const asset fee)
 {
     require_auth( get_self() );
 
+    if ( is_account("stats.sx"_n) ) require_recipient( "stats.sx"_n );
+
     // post trade - not used for price logic
-    set_reserve( rate.symbol.code() );
-    set_reserve( quantity.symbol.code() );
-    update_volume( vector<asset>{ quantity, rate }, fee );
-    update_spot_prices();
+    const symbol_code in_symcode = amount_in.symbol.code();
+    const symbol_code out_symcode = amount_out.symbol.code();
+    set_reserve( in_symcode );
+    set_reserve( out_symcode );
 }

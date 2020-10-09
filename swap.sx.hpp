@@ -20,42 +20,21 @@ public:
      *
      * - `{int64_t} fee` - trading fee (pips 1/100 of 1%)
      * - `{int64_t} amplifier` - liquidity pool amplifier
-     * - `{symbol_code} base` - base symbol for quote
      *
      * ### example
      *
      * ```json
      * {
      *   "fee": 20,
-     *   "amplifier": 20,
-     *   "base": "USDT"
+     *   "amplifier": 20
      * }
      * ```
      */
     struct [[eosio::table("settings")]] params {
         int64_t             fee;
         int64_t             amplifier;
-        symbol_code         base;
     };
     typedef eosio::singleton< "settings"_n, params > settings;
-
-    /**
-     * ## TABLE `docs`
-     *
-     * - `{string} url` - Documentation url
-     *
-     * ### example
-     *
-     * ```json
-     * {
-     *   "url": "https://github.com/stableex/sx.swap"
-     * }
-     * ```
-     */
-    struct [[eosio::table("docs")]] docs_row {
-        string      url = "https://github.com/stableex/sx.swap";
-    };
-    typedef eosio::singleton< "docs"_n, docs_row > docs;
 
     /**
      * ## TABLE `tokens`
@@ -65,6 +44,7 @@ public:
      * - `{asset} balance` - current balance
      * - `{asset} depth` - liquidity depth
      * - `{asset} reserve` - liquidity reserve
+     * - `{asset} virtual_reserve` - virtual liquidity reserve
      *
      * ### example
      *
@@ -74,7 +54,8 @@ public:
      *     "contract": "tethertether",
      *     "balance": "10000.0000 USDT",
      *     "depth": "10000.0000 USDT",
-     *     "reserve": "10000.0000 USDT"
+     *     "reserve": "10000.0000 USDT",
+     *     "virtual_reserve": "200000.0000 USDT"
      * }
      * ```
      */
@@ -84,67 +65,11 @@ public:
         asset                       balance;
         asset                       depth;
         asset                       reserve;
+        asset                       virtual_reserve;
 
         uint64_t primary_key() const { return sym.code().raw(); }
     };
-    typedef eosio::multi_index< "tokens"_n, tokens_row > tokens_table;
-
-    /**
-     * ## TABLE `volume`
-     *
-     * - `{time_point_sec} timestamp` - daily periods (86400 seconds)
-     * - `{map<symbol_code, asset>} fees` - total fees collected
-     * - `{map<symbol_code, asset>} volume` - total trading volume of assets
-     *
-     * ### example
-     *
-     * ```json
-     * {
-     *     "timestamp": "2020-06-03T00:00:00",
-     *     "volume": [
-     *         {"key": "EOS", "value": "25.0000 EOS"},
-     *         {"key": "USDT", "value": "100.0000 USDT"}
-     *     ],
-     *     "fees": [
-     *         {"key": "EOS", "value": "0.1250 EOS"},
-     *         {"key": "USDT", "value": "0.5000 USDT"}
-     *     ]
-     * }
-     * ```
-     */
-    struct [[eosio::table("volume")]] volume_params {
-        time_point_sec             timestamp;
-        map<symbol_code, asset>    volume;
-        map<symbol_code, asset>    fees;
-    };
-    typedef eosio::singleton< "volume"_n, volume_params > volume_table;
-
-    /**
-     * ## TABLE `spotprices`
-     *
-     * - `{time_point_sec} last_modified` - last modified timestamp
-     * - `{symbol_code} fees` - base symbol code
-     * - `{map<symbol_code, double>} quotes` - quotes prices calculated relative to base
-     *
-     * ### example
-     *
-     * ```json
-     * {
-     *   "last_modified": "2020-07-10T15:17:23",
-     *   "base": "USDT",
-     *   "quotes": [
-     *     {"key": "EOS", "value": 2.6098},
-     *     {"key": "USDT", "value": 1.0000}
-     *   ]
-     * }
-     * ```
-     */
-    struct [[eosio::table("spotprices")]] spotprices_params {
-        time_point_sec              last_modified;
-        symbol_code                 base;
-        map<symbol_code, double>    quotes;
-    };
-    typedef eosio::singleton< "spotprices"_n, spotprices_params > spotprices_table;
+    typedef eosio::multi_index< "tokens"_n, tokens_row > tokens;
 
     /**
      * ## ACTION `setparams`
@@ -188,7 +113,7 @@ public:
     void token( const symbol_code symcode, const optional<name> contract );
 
     /**
-     * ## ACTION `log`
+     * ## ACTION `swaplog`
      *
      * Notify of trade
      *
@@ -197,27 +122,21 @@ public:
      * ### params
      *
      * - `{name} buyer` - trader buyer account
-     * - `{asset} quantity` - incoming quantity
-     * - `{asset} rate` - outgoing rate
-     * - `{asset} fee` - fee paid per trade
-     * - `{double} trade_price` - trade price per unit
-     * - `{double} spot_price` - spot price per rate
-     * - `{double} value` - total value of trade relative to spot price symbol
+     * - `{asset} amount_in` - amount incoming
+     * - `{asset} amount_out` - amount outgoing
+     * - `{asset} fee` - fee paid
      *
      * ### example
      *
      * ```bash
-     * cleos push action swap.sx log '["myaccount", "3.0000 EOS", "7.0486 USDT", "0.0060 EOS", 2.3495, 1.0119, 7.1327]' -p swap.sx
+     * cleos push action swap.sx swaplog '["myaccount", "3.0000 EOS", "7.0486 USDT", "0.0060 EOS"]' -p swap.sx
      * ```
      */
     [[eosio::action]]
-    void log( const name buyer,
-              const asset quantity,
-              const asset rate,
-              const asset fee,
-              const double trade_price,
-              const double spot_price,
-              const double value );
+    void swaplog( const name buyer,
+                  const asset amount_in,
+                  const asset amount_out,
+                  const asset fee );
 
     /**
      * Notify contract when any token transfer notifiers relay contract
@@ -228,162 +147,78 @@ public:
                       const asset      quantity,
                       const string     memo );
 
+    [[eosio::action]]
+    void clear();
+
+
+
     /**
-     * ## STATIC `get_rate`
+     * ## STATIC `get_amount_out`
      *
-     * Get calculated rate (includes fee)
+     * Given an input amount of an asset and pair reserves, returns the maximum output amount of the other asset
      *
      * ### params
      *
-     * - `{name} code` - SX contract account
-     * - `{asset} quantity` - input quantity
-     * - `{symbol_code} symcode` - out symbol code
+     * - `{name} contract` - contract name
+     * - `{asset} amount_in` - amount input
+     * - `{asset} symcode_out` - symbol code out
      *
      * ### example
      *
      * ```c++
-     * const asset quantity = asset{10000, symbol{"EOS", 4}};
-     * const symbol_code symcode = symbol_code{"USDT"};
-     * const asset rate = get_rate( "swap.sx"_n, quantity, symcode );
-     * //=> "2.7712 USDT"
+     * // Inputs
+     * const name contract = "swap.sx"_n;
+     * const asset amount_in = asset{10000, symbol{"EOS", 4}};
+     * const asset symcode_out = symbol_code{"USDT"};
+     *
+     * // Calculation
+     * const asset amount_out = swapSx::get_amount_out( contract, amount_in, symcode_out );
+     * // => "2.7328 USDT"
      * ```
      */
-    static asset get_rate( const name code, const asset quantity, const symbol_code symcode )
+    static asset get_amount_out( const name contract, const asset amount_in, const symbol_code symcode_out )
     {
-        const asset fee = swapSx::get_fee( code, quantity );
-        return swapSx::get_price( code, quantity - fee, symcode );
-    }
+        swapSx::settings _settings( contract, contract.value );
+        swapSx::tokens _tokens( contract, contract.value );
 
-    // convert
-    static vector<double> get_uppers( const name code, const symbol_code base_symcode, const symbol_code quote_symcode )
-    {
-        // settings
-        swapSx::settings _settings( code, code.value );
-        swapSx::tokens_table _tokens( code, code.value );
-        const tokens_row base = _tokens.get( base_symcode.raw(), "base symbol code does not exists" );
-        const tokens_row quote = _tokens.get( quote_symcode.raw(), "quote symbol code does not exists" );
-        const int64_t amplifier = _settings.get().amplifier;
+        check(_settings.exists(), contract.to_string() + " settings are not initialized");
 
-        // depth
-        const double base_depth = swapSx::asset_to_double( base.depth );
-        const double quote_depth = swapSx::asset_to_double( quote.depth );
-
-        // ratio
-        const double base_ratio = static_cast<double>(base.balance.amount) / base.depth.amount;
-        const double quote_ratio = static_cast<double>(quote.balance.amount) / quote.depth.amount;
-
-        // upper
-        const double base_upper = ( amplifier * base_depth - base_depth + (base_depth * base_ratio));
-        const double quote_upper = ( amplifier * quote_depth - quote_depth + (quote_depth * quote_ratio));
-
-        return vector<double>{ base_upper, quote_upper };
-    }
-
-    static asset get_price( const name code, const asset quantity, const symbol_code symcode )
-    {
-        // quantity input
-        const double in_amount = swapSx::asset_to_double( quantity );
-
-        // upper limits
-        const vector<double> uppers = swapSx::get_uppers( code, quantity.symbol.code(), symcode );
-        const double base_upper = uppers[0];
-        const double quote_upper = uppers[1];
-
-        // Bancor V1 Formula
-        const double out = swapSx::get_bancor_output( base_upper, quote_upper, in_amount );
-
-        return swapSx::double_to_asset( out, get_symbol( code, symcode ));
-    }
-
-    static asset get_fee( const name code, const asset quantity )
-    {
-        // settings
-        swapSx::settings _settings( code, code.value );
         const int64_t fee = _settings.get().fee;
+        const asset reserve_in = _tokens.get( amount_in.symbol.code().raw(), "[amount_in] token does not exists").virtual_reserve;
+        const asset reserve_out = _tokens.get( symcode_out.raw(), "[symbol_out] token does not exists").virtual_reserve;
 
-        // fee colleceted from incoming transfer (in basis points 1/100 of 1% )
-        asset calculated_fee = quantity * fee / 10000;
-
-        // set minimum fee to smallest decimal of asset
-        if ( fee > 0 && calculated_fee.amount == 0 ) calculated_fee.amount = 1;
-        check( calculated_fee < quantity, "fee exceeds quantity");
-        return calculated_fee;
-    }
-
-    // utils
-    static double asset_to_double( const asset quantity )
-    {
-        if ( quantity.amount == 0 ) return 0.0;
-        return quantity.amount / pow(10, quantity.symbol.precision());
-    }
-
-    static asset double_to_asset( const double amount, const symbol sym )
-    {
-        return asset{ static_cast<int64_t>(amount * pow(10, sym.precision())), sym };
-    }
-
-    // bancor
-    static double get_bancor_output( const double base_reserve, const double quote_reserve, const double quantity )
-    {
-        const double out = (quantity * quote_reserve) / (base_reserve + quantity);
-        if ( out < 0 ) return 0;
-        return out;
-    }
-
-    static double get_bancor_input( const double quote_reserve, const double base_reserve, const double out )
-    {
-        const double inp = (base_reserve * out) / (quote_reserve - out);
-        if ( inp < 0 ) return 0;
-        return inp;
-    }
-
-    // tokens
-    static name get_contract( const name code, const symbol_code symcode )
-    {
-        return get_extended_symbol( code, symcode ).get_contract();
-    }
-
-    static symbol get_symbol( const name code, const symbol_code symcode )
-    {
-        return get_extended_symbol( code, symcode ).get_symbol();
-    }
-
-    static extended_symbol get_extended_symbol( const name code, const symbol_code symcode )
-    {
-        swapSx::tokens_table _tokens( code, code.value );
-        auto token = _tokens.find( symcode.raw() );
-        check( token != _tokens.end(), symcode.to_string() + " cannot find token");
-        return extended_symbol{ token->sym, token->contract };
+        return uniswap::get_amount_out( amount_in, reserve_in, reserve_out, fee );
     }
 
     // action wrappers
     using setparams_action = eosio::action_wrapper<"setparams"_n, &swapSx::setparams>;
     using token_action = eosio::action_wrapper<"token"_n, &swapSx::token>;
-    using log_action = eosio::action_wrapper<"log"_n, &swapSx::log>;
+    using swaplog_action = eosio::action_wrapper<"swaplog"_n, &swapSx::swaplog>;
 
 private:
     // utils
     symbol_code parse_memo_symcode( const string memo );
     void self_transfer( const name to, const asset quantity, const string memo );
+    name get_contract( const name code, const symbol_code symcode );
+    symbol get_symbol( const name code, const symbol_code symcode );
+    extended_symbol get_extended_symbol( const name code, const symbol_code symcode );
+
+    // virtual reserve
+    asset get_upper( const symbol_code symcode );
 
     // tokens
     void add_balance( const asset quantity );
     void sub_balance( const asset quantity );
     void set_reserve( const symbol_code symcode );
-
+    void set_virtual_reserve( const symbol_code symcode );
     bool is_token_exists( const symbol_code symcode );
 
     void check_is_active( const symbol_code symcode, const name contract );
     void check_remaining_balance( const asset out );
 
-    // volume
-    void update_volume( const vector<asset> volumes, const asset fee );
-
-    // spot prices
-    void update_spot_prices();
-    double get_spot_price( const symbol_code base, const symbol_code quote );
-    map<symbol_code, double> get_spot_prices( const symbol_code base );
-
     // settings
     void erase_all_tokens();
+
+    template <typename T>
+    void clear_table( T& table );
 };
