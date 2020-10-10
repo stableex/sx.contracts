@@ -177,15 +177,49 @@ public:
     static asset get_amount_out( const name contract, const asset amount_in, const symbol_code symcode_out )
     {
         swapSx::settings _settings( contract, contract.value );
-        swapSx::tokens _tokens( contract, contract.value );
-
         check(_settings.exists(), contract.to_string() + " settings are not initialized");
 
         const int64_t fee = _settings.get().fee;
-        const asset reserve_in = _tokens.get( amount_in.symbol.code().raw(), "[amount_in] token does not exists").virtual_reserve;
-        const asset reserve_out = _tokens.get( symcode_out.raw(), "[symbol_out] token does not exists").virtual_reserve;
+        const auto [ reserve_in, reserve_out ] = swapSx::get_reserves( contract, quantity.symbol.code(), symcode_out );
 
         return uniswap::get_amount_out( amount_in, reserve_in, reserve_out, fee );
+    }
+
+    /**
+     * ## STATIC `get_reserves`
+     *
+     * Get reserves for a pair
+     *
+     * ### params
+     *
+     * - `{symbol_code} symcode_in` - incoming symbol code
+     * - `{symbol_code} symcode_out` - outgoing symbol code
+     *
+     * ### returns
+     *
+     * - `{pair<asset, asset>}` - pair of reserve assets
+     *
+     * ### example
+     *
+     * ```c++
+     * const name contract = "swap.sx"_n;
+     * const symbol_code symcode_in = symbol_code{"EOS"};
+     * const symbol_code symcode_out = symbol_code{"USDT"};
+     *
+     * const auto [reserve0, reserve1] = swapSx::get_reserves( contract, symcode_in, symcode_out );
+     * // reserve0 => "4585193.1234 EOS"
+     * // reserve1 => "12568203.3533 USDT"
+     * ```
+     */
+    static std::pair<asset, asset> get_reserves(const name contract, const symbol_code symcode_in, const symbol_code symcode_out )
+    {
+        // table
+        swapSx::tokens _tokens( contract, contract.value );
+
+        const asset reserve_in = _tokens.get( symcode_in.raw(), "[symcode_in] token does not exists").virtual_reserve;
+        const asset reserve_out = _tokens.get( symcode_out.raw(), "[symcode_out] token does not exists").virtual_reserve;
+
+        return std::pair<asset, asset>{ reserve_in, reserve_out };
     }
 
     // action wrappers

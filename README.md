@@ -21,7 +21,7 @@
 |----------------|-----------------|
 | `swap.sx`      | EOS, USDT, PBTC
 | `stable.sx`    | EOS, USDT, EOSDT, USDB, VIGOR, USDE, USN
-| `vigor.sx`     | VIGOR, USDT
+| `vigor.sx`     | EOS, USDT, VIGOR
 
 ## Quickstart
 
@@ -72,6 +72,7 @@ for ( const auto token : _tokens ) {
 ## Table of Content
 
 - [STATIC `get_amount_out`](#static-get_amount_out)
+- [STATIC `get_reserves`](#static-get_reserves)
 - [TABLE `settings`](#table-settings)
 - [TABLE `tokens`](#table-tokens)
 - [ACTION `setparams`](#action-setparams)
@@ -99,6 +100,31 @@ const asset symcode_out = symbol_code{"USDT"};
 // Calculation
 const asset amount_out = swapSx::get_amount_out( contract, amount_in, symcode_out );
 // => "2.7328 USDT"
+```
+
+## STATIC `get_reserves`
+
+Get reserves for a pair
+
+### params
+
+- `{symbol_code} symcode_in` - incoming symbol code
+- `{symbol_code} symcode_out` - outgoing symbol code
+
+### returns
+
+- `{pair<asset, asset>}` - pair of reserve assets
+
+### example
+
+```c++
+const name contract = "swap.sx"_n;
+const symbol_code symcode_in = symbol_code{"EOS"};
+const symbol_code symcode_out = symbol_code{"USDT"};
+
+const auto [reserve0, reserve1] = swapSx::get_reserves( contract, symcode_in, symcode_out );
+// reserve0 => "4585193.1234 EOS"
+// reserve1 => "12568203.3533 USDT"
 ```
 
 ## TABLE `settings`
