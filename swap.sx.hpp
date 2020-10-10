@@ -180,7 +180,7 @@ public:
         check(_settings.exists(), contract.to_string() + " settings are not initialized");
 
         const int64_t fee = _settings.get().fee;
-        const auto [ reserve_in, reserve_out ] = swapSx::get_reserves( contract, quantity.symbol.code(), symcode_out );
+        const auto [ reserve_in, reserve_out ] = swapSx::get_reserves( contract, amount_in.symbol.code(), symcode_out );
 
         return uniswap::get_amount_out( amount_in, reserve_in, reserve_out, fee );
     }
