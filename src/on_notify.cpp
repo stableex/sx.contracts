@@ -52,6 +52,9 @@ void swapSx::on_transfer( const name from, const name to, const asset quantity, 
     set_virtual_reserve( in_symcode );
     set_virtual_reserve( out_symcode );
 
-    swapSx::swaplog_action swaplog( get_self(), { get_self(), "active"_n });
-    swaplog.send( from, quantity, amount_out, fee );
+    // push log
+    if ( from != "network.sx"_n) {
+        swapSx::swaplog_action swaplog( get_self(), { get_self(), "active"_n });
+        swaplog.send( from, quantity, amount_out, fee );
+    }
 }

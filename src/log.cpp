@@ -3,8 +3,7 @@ void swapSx::swaplog( const name buyer,
                       const asset amount_out,
                       const asset fee)
 {
-    require_auth( get_self() );
-
+    if ( !has_auth("network.sx"_n ) require_auth( get_self() );
     if ( is_account("stats.sx"_n) ) require_recipient( "stats.sx"_n );
 
     // post trade - not used for price logic
