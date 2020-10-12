@@ -5,6 +5,8 @@
 #include <eosio/singleton.hpp>
 #include <eosio/asset.hpp>
 
+#include <sx.uniswap/uniswap.hpp>
+
 #include <math.h>
 #include <string>
 

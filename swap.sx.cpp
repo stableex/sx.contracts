@@ -1,5 +1,4 @@
 #include <eosio.token/eosio.token.hpp>
-#include <sx.uniswap/uniswap.hpp>
 
 #include "swap.sx.hpp"
 #include "src/on_notify.cpp"
