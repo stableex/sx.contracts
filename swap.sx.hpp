@@ -184,7 +184,7 @@ public:
         const int64_t fee = _settings.get().fee;
         const auto [ reserve_in, reserve_out ] = swapSx::get_reserves( contract, amount_in.symbol.code(), symcode_out );
 
-        return uniswap::get_amount_out( amount_in, reserve_in, reserve_out, fee );
+        return { static_cast<int64_t>( uniswap::get_amount_out( amount_in.amount, reserve_in.amount, reserve_out.amount, fee )), reserve_out.symbol };
     }
 
     /**
