@@ -1,6 +1,6 @@
-void swapSx::add_balance( const asset quantity )
+void sx::swap::add_balance( const asset quantity )
 {
-    swapSx::tokens _tokens( get_self(), get_self().value );
+    sx::swap::tokens _tokens( get_self(), get_self().value );
     auto itr = _tokens.find( quantity.symbol.code().raw() );
     if ( itr == _tokens.end() ) return;
 
@@ -9,9 +9,9 @@ void swapSx::add_balance( const asset quantity )
     });
 }
 
-void swapSx::sub_balance( const asset quantity )
+void sx::swap::sub_balance( const asset quantity )
 {
-    swapSx::tokens _tokens( get_self(), get_self().value );
+    sx::swap::tokens _tokens( get_self(), get_self().value );
     auto itr = _tokens.find( quantity.symbol.code().raw() );
     if ( itr == _tokens.end() ) return;
 
@@ -22,9 +22,9 @@ void swapSx::sub_balance( const asset quantity )
     });
 }
 
-void swapSx::set_reserve( const symbol_code symcode )
+void sx::swap::set_reserve( const symbol_code symcode )
 {
-    swapSx::tokens _tokens( get_self(), get_self().value );
+    sx::swap::tokens _tokens( get_self(), get_self().value );
     auto itr = _tokens.find( symcode.raw() );
     if ( itr == _tokens.end() ) return;
 
@@ -33,28 +33,13 @@ void swapSx::set_reserve( const symbol_code symcode )
     });
 }
 
-void swapSx::set_virtual_reserve( const symbol_code symcode )
+bool sx::swap::is_token_exists( const symbol_code symcode )
 {
-    swapSx::tokens _tokens( get_self(), get_self().value );
-    swapSx::settings _settings( get_self(), get_self().value );
-
-    check(_settings.exists(), "settings are not initialized");
-
-    auto itr = _tokens.find( symcode.raw() );
-    if ( itr == _tokens.end() ) return;
-
-    _tokens.modify( itr, same_payer, [&]( auto & row ) {
-        row.virtual_reserve = get_upper( symcode );
-    });
-}
-
-bool swapSx::is_token_exists( const symbol_code symcode )
-{
-    swapSx::tokens _tokens( get_self(), get_self().value );
+    sx::swap::tokens _tokens( get_self(), get_self().value );
     return ( _tokens.find( symcode.raw() ) != _tokens.end() );
 }
 
-void swapSx::check_remaining_balance( const asset out )
+void sx::swap::check_remaining_balance( const asset out )
 {
     const symbol_code symcode = out.symbol.code();
     const name contract = get_contract( get_self(), symcode );
@@ -64,9 +49,9 @@ void swapSx::check_remaining_balance( const asset out )
     check( remaining.amount >= 0, get_self().to_string() + " has insufficient balance to convert " + out.to_string() );
 }
 
-void swapSx::check_is_active( const symbol_code symcode, const name contract )
+void sx::swap::check_is_active( const symbol_code symcode, const name contract )
 {
-    swapSx::tokens _tokens( get_self(), get_self().value );
+    sx::swap::tokens _tokens( get_self(), get_self().value );
     auto token = _tokens.find( symcode.raw() );
     check( token != _tokens.end(), symcode.to_string() + " token not available");
 

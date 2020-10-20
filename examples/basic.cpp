@@ -17,7 +17,7 @@ public:
     void init( const asset quantity, const symbol_code symcode )
     {
         // pre-calculate rate
-        const asset rate = swapSx::get_rate("swap.sx"_n, quantity, symcode);
+        const asset rate = sx::swap::get_amount_out("swap.sx"_n, quantity, symcode);
         print("rate: " + rate.to_string() );
 
         // swap

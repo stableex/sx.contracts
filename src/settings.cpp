@@ -1,8 +1,8 @@
 [[eosio::action]]
-void swapSx::setparams( const optional<swapSx::params> params )
+void sx::swap::setparams( const optional<sx::swap::params> params )
 {
     require_auth( get_self() );
-    swapSx::settings _settings( get_self(), get_self().value );
+    sx::swap::settings _settings( get_self(), get_self().value );
 
     // clear table if params is `null`
     if ( !params ) {
@@ -23,11 +23,11 @@ void swapSx::setparams( const optional<swapSx::params> params )
 }
 
 [[eosio::action]]
-void swapSx::token( const symbol_code symcode, const optional<name> contract )
+void sx::swap::token( const symbol_code symcode, const optional<name> contract )
 {
     require_auth( get_self() );
 
-    swapSx::tokens _tokens( get_self(), get_self().value );
+    sx::swap::tokens _tokens( get_self(), get_self().value );
     auto itr = _tokens.find( symcode.raw() );
 
     // delete if contract is null
@@ -56,9 +56,9 @@ void swapSx::token( const symbol_code symcode, const optional<name> contract )
     set_virtual_reserve( symcode );
 }
 
-void swapSx::erase_all_tokens()
+void sx::swap::erase_all_tokens()
 {
-    swapSx::tokens _tokens( get_self(), get_self().value );
+    sx::swap::tokens _tokens( get_self(), get_self().value );
 
     set<symbol_code> tokens;
     for ( auto row : _tokens ) {

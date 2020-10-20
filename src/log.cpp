@@ -1,4 +1,4 @@
-void swapSx::swaplog( const name buyer,
+void sx::swap::swaplog( const name buyer,
                       const asset amount_in,
                       const asset amount_out,
                       const asset fee)

@@ -13,7 +13,8 @@
 using namespace eosio;
 using namespace std;
 
-class [[eosio::contract("swap.sx")]] swapSx : public contract {
+namespace sx {
+class [[eosio::contract("swap.sx")]] swap : public contract {
 public:
     using contract::contract;
 
@@ -91,7 +92,7 @@ public:
      * ```
      */
     [[eosio::action]]
-    void setparams( const optional<swapSx::params> params );
+    void setparams( const optional<sx::swap::params> params );
 
     /**
      * ## ACTION `token`
@@ -172,19 +173,19 @@ public:
      * const asset symcode_out = symbol_code{"USDT"};
      *
      * // Calculation
-     * const asset amount_out = swapSx::get_amount_out( contract, amount_in, symcode_out );
+     * const asset amount_out = sx::swap::get_amount_out( contract, amount_in, symcode_out );
      * // => "2.7328 USDT"
      * ```
      */
     static asset get_amount_out( const name contract, const asset amount_in, const symbol_code symcode_out )
     {
-        swapSx::settings _settings( contract, contract.value );
+        sx::swap::settings _settings( contract, contract.value );
         check(_settings.exists(), contract.to_string() + " settings are not initialized");
 
         const int64_t fee = _settings.get().fee;
-        const auto [ reserve_in, reserve_out ] = swapSx::get_reserves( contract, amount_in.symbol.code(), symcode_out );
-
-        return { static_cast<int64_t>( uniswap::get_amount_out( amount_in.amount, reserve_in.amount, reserve_out.amount, fee )), reserve_out.symbol };
+        const auto [ reserve_in, reserve_out ] = sx::swap::get_reserves( contract, amount_in.symbol.code(), symcode_out );
+        const uint64_t out = uniswap::get_amount_out( amount_in.amount, reserve_in.amount, reserve_out.amount, fee );
+        return { static_cast<int64_t>( out ), reserve_out.symbol };
     }
 
     /**
@@ -208,7 +209,7 @@ public:
      * const symbol_code symcode_in = symbol_code{"EOS"};
      * const symbol_code symcode_out = symbol_code{"USDT"};
      *
-     * const auto [reserve0, reserve1] = swapSx::get_reserves( contract, symcode_in, symcode_out );
+     * const auto [reserve0, reserve1] = sx::swap::get_reserves( contract, symcode_in, symcode_out );
      * // reserve0 => "4585193.1234 EOS"
      * // reserve1 => "12568203.3533 USDT"
      * ```
@@ -216,7 +217,7 @@ public:
     static std::pair<asset, asset> get_reserves(const name contract, const symbol_code symcode_in, const symbol_code symcode_out )
     {
         // table
-        swapSx::tokens _tokens( contract, contract.value );
+        sx::swap::tokens _tokens( contract, contract.value );
 
         const asset reserve_in = _tokens.get( symcode_in.raw(), "[symcode_in] token does not exists").virtual_reserve;
         const asset reserve_out = _tokens.get( symcode_out.raw(), "[symcode_out] token does not exists").virtual_reserve;
@@ -225,9 +226,9 @@ public:
     }
 
     // action wrappers
-    using setparams_action = eosio::action_wrapper<"setparams"_n, &swapSx::setparams>;
-    using token_action = eosio::action_wrapper<"token"_n, &swapSx::token>;
-    using swaplog_action = eosio::action_wrapper<"swaplog"_n, &swapSx::swaplog>;
+    using setparams_action = eosio::action_wrapper<"setparams"_n, &sx::swap::setparams>;
+    using token_action = eosio::action_wrapper<"token"_n, &sx::swap::token>;
+    using swaplog_action = eosio::action_wrapper<"swaplog"_n, &sx::swap::swaplog>;
 
 private:
     // utils
@@ -256,3 +257,4 @@ private:
     template <typename T>
     void clear_table( T& table );
 };
+}

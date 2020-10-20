@@ -1,5 +1,5 @@
 [[eosio::on_notify("*::transfer")]]
-void swapSx::on_transfer( const name from, const name to, const asset quantity, const string memo )
+void sx::swap::on_transfer( const name from, const name to, const asset quantity, const string memo )
 {
     // authenticate incoming `from` account
     require_auth( from );
@@ -16,7 +16,7 @@ void swapSx::on_transfer( const name from, const name to, const asset quantity, 
     }
 
     // check if contract maintenance is ongoing
-    swapSx::settings _settings( get_self(), get_self().value );
+    sx::swap::settings _settings( get_self(), get_self().value );
     check( _settings.exists(), "contract is currently disabled for maintenance");
     auto settings = _settings.get();
 
@@ -28,11 +28,9 @@ void swapSx::on_transfer( const name from, const name to, const asset quantity, 
     check( in_symcode != out_symcode, in_symcode.to_string() + " symbol code cannot be the same as quantity");
 
     // calculate rates
-    const asset reserve_in = get_upper( in_symcode );
-    const asset reserve_out = get_upper( out_symcode );
-    const asset amount_out = uniswap::get_amount_out( quantity, reserve_in, reserve_out, settings.fee );
+    const asset amount_out = sx::swap::get_amount_out( get_self(), quantity, out_symcode );
 
-    // approximate fee
+    // calculate fee
     const asset fee = quantity * settings.fee / 10000;
 
     // validate output
@@ -54,7 +52,7 @@ void swapSx::on_transfer( const name from, const name to, const asset quantity, 
 
     // push log
     if ( from != "network.sx"_n) {
-        swapSx::swaplog_action swaplog( get_self(), { get_self(), "active"_n });
+        sx::swap::swaplog_action swaplog( get_self(), { get_self(), "active"_n });
         swaplog.send( from, quantity, amount_out, fee );
     }
 }
