@@ -183,9 +183,46 @@ public:
         check(_settings.exists(), contract.to_string() + " settings are not initialized");
 
         const int64_t fee = _settings.get().fee;
-        const auto [ reserve_in, reserve_out ] = sx::swap::get_reserves( contract, amount_in.symbol.code(), symcode_out );
+        const auto [ reserve_in, reserve_out ] = sx::swap::get_virtual_reserves( contract, amount_in.symbol.code(), symcode_out );
         const uint64_t out = uniswap::get_amount_out( amount_in.amount, reserve_in.amount, reserve_out.amount, fee );
         return { static_cast<int64_t>( out ), reserve_out.symbol };
+    }
+
+    /**
+     * ## STATIC `get_virtual_reserves`
+     *
+     * Get virtual reserves for a pair
+     *
+     * ### params
+     *
+     * - `{symbol_code} symcode_in` - incoming symbol code
+     * - `{symbol_code} symcode_out` - outgoing symbol code
+     *
+     * ### returns
+     *
+     * - `{pair<asset, asset>}` - pair of reserve assets
+     *
+     * ### example
+     *
+     * ```c++
+     * const name contract = "swap.sx"_n;
+     * const symbol_code symcode_in = symbol_code{"EOS"};
+     * const symbol_code symcode_out = symbol_code{"USDT"};
+     *
+     * const auto [reserve0, reserve1] = sx::swap::get_virtual_reserves( contract, symcode_in, symcode_out );
+     * // reserve0 => "50000.0000 EOS"
+     * // reserve1 => "150000.0000 USDT"
+     * ```
+     */
+    static std::pair<asset, asset> get_virtual_reserves(const name contract, const symbol_code symcode_in, const symbol_code symcode_out )
+    {
+        // table
+        sx::swap::tokens _tokens( contract, contract.value );
+
+        const asset reserve_in = _tokens.get( symcode_in.raw(), "[symcode_in] token does not exists").virtual_reserve;
+        const asset reserve_out = _tokens.get( symcode_out.raw(), "[symcode_out] token does not exists").virtual_reserve;
+
+        return std::pair<asset, asset>{ reserve_in, reserve_out };
     }
 
     /**
@@ -210,8 +247,8 @@ public:
      * const symbol_code symcode_out = symbol_code{"USDT"};
      *
      * const auto [reserve0, reserve1] = sx::swap::get_reserves( contract, symcode_in, symcode_out );
-     * // reserve0 => "4585193.1234 EOS"
-     * // reserve1 => "12568203.3533 USDT"
+     * // reserve0 => "250.0000 EOS"
+     * // reserve1 => "750.0000 USDT"
      * ```
      */
     static std::pair<asset, asset> get_reserves(const name contract, const symbol_code symcode_in, const symbol_code symcode_out )
@@ -219,10 +256,42 @@ public:
         // table
         sx::swap::tokens _tokens( contract, contract.value );
 
-        const asset reserve_in = _tokens.get( symcode_in.raw(), "[symcode_in] token does not exists").virtual_reserve;
-        const asset reserve_out = _tokens.get( symcode_out.raw(), "[symcode_out] token does not exists").virtual_reserve;
+        const asset reserve_in = _tokens.get( symcode_in.raw(), "[symcode_in] token does not exists").reserve;
+        const asset reserve_out = _tokens.get( symcode_out.raw(), "[symcode_out] token does not exists").reserve;
 
         return std::pair<asset, asset>{ reserve_in, reserve_out };
+    }
+
+    /**
+     * ## STATIC `is_available`
+     *
+     * Calculate if contract has enough reserve to cover out quantity.
+     *
+     * ### params
+     *
+     * - `{name} contract` - swap contract
+     * - `{asset} out` - out quantity
+     *
+     * ### returns
+     *
+     * - `{bool}` - (true/false) if reserve has enough to cover quantity
+     *
+     * ### example
+     *
+     * ```c++
+     * const name contract = "swap.sx"_n;
+     * const asset out = asset{10000, symbol{"EOS", 4}};
+     *
+     * const bool available = sx::swap::is_available( contract, out );
+     * // => true/false
+     * ```
+     */
+    static bool is_available(const name contract, const asset out )
+    {
+        // table
+        sx::swap::tokens _tokens( contract, contract.value );
+        const asset reserve = _tokens.get( out.symbol.code().raw(), "[out] token does not exists").reserve;
+        return out >= reserve;
     }
 
     // action wrappers

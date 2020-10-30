@@ -21,7 +21,6 @@
 |----------------|-----------------|
 | `swap.sx`      | EOS, USDT, PBTC
 | `stable.sx`    | EOS, USDT, EOSDT, USDB, VIGOR, USDE, USN
-| `vigor.sx`     | EOS, USDT, VIGOR
 
 ## Quickstart
 
@@ -72,7 +71,9 @@ for ( const auto token : _tokens ) {
 ## Table of Content
 
 - [STATIC `get_amount_out`](#static-get_amount_out)
+- [STATIC `is_available`](#static-is_available)
 - [STATIC `get_reserves`](#static-get_reserves)
+- [STATIC `get_virtual_reserves`](#static-get_virtual_reserves)
 - [TABLE `settings`](#table-settings)
 - [TABLE `tokens`](#table-tokens)
 - [ACTION `setparams`](#action-setparams)
@@ -102,6 +103,54 @@ const asset amount_out = swapSx::get_amount_out( contract, amount_in, symcode_ou
 // => "2.7328 USDT"
 ```
 
+## STATIC `is_available`
+
+Calculate if contract has enough reserve to cover out quantity.
+
+### params
+
+- `{name} contract` - swap contract
+- `{asset} out` - out quantity
+
+### returns
+
+- `{bool}` - (true/false) if reserve has enough to cover quantity
+
+### example
+
+```c++
+const name contract = "swap.sx"_n;
+const asset out = asset{10000, symbol{"EOS", 4}};
+
+const bool available = sx::swap::is_available( contract, out );
+// => true/false
+```
+
+## STATIC `get_virtual_reserves`
+
+Get virtual reserves for a pair
+
+### params
+
+- `{symbol_code} symcode_in` - incoming symbol code
+- `{symbol_code} symcode_out` - outgoing symbol code
+
+### returns
+
+- `{pair<asset, asset>}` - pair of reserve assets
+
+### example
+
+```c++
+const name contract = "swap.sx"_n;
+const symbol_code symcode_in = symbol_code{"EOS"};
+const symbol_code symcode_out = symbol_code{"USDT"};
+
+const auto [reserve0, reserve1] = sx::swap::get_virtual_reserves( contract, symcode_in, symcode_out );
+// reserve0 => "50000.0000 EOS"
+// reserve1 => "150000.0000 USDT"
+```
+
 ## STATIC `get_reserves`
 
 Get reserves for a pair
@@ -122,9 +171,9 @@ const name contract = "swap.sx"_n;
 const symbol_code symcode_in = symbol_code{"EOS"};
 const symbol_code symcode_out = symbol_code{"USDT"};
 
-const auto [reserve0, reserve1] = swapSx::get_reserves( contract, symcode_in, symcode_out );
-// reserve0 => "4585193.1234 EOS"
-// reserve1 => "12568203.3533 USDT"
+const auto [reserve0, reserve1] = sx::swap::get_reserves( contract, symcode_in, symcode_out );
+// reserve0 => "250.0000 EOS"
+// reserve1 => "750.0000 USDT"
 ```
 
 ## TABLE `settings`
