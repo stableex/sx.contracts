@@ -116,32 +116,6 @@ public:
     void token( const symbol_code symcode, const optional<name> contract );
 
     /**
-     * ## ACTION `swaplog`
-     *
-     * Notify of trade
-     *
-     * - **authority**: `get_self()`
-     *
-     * ### params
-     *
-     * - `{name} buyer` - trader buyer account
-     * - `{asset} amount_in` - amount incoming
-     * - `{asset} amount_out` - amount outgoing
-     * - `{asset} fee` - fee paid
-     *
-     * ### example
-     *
-     * ```bash
-     * cleos push action swap.sx swaplog '["myaccount", "3.0000 EOS", "7.0486 USDT", "0.0060 EOS"]' -p swap.sx
-     * ```
-     */
-    [[eosio::action]]
-    void swaplog( const name buyer,
-                  const asset amount_in,
-                  const asset amount_out,
-                  const asset fee );
-
-    /**
      * Notify contract when any token transfer notifiers relay contract
      */
     [[eosio::on_notify("*::transfer")]]
@@ -297,7 +271,6 @@ public:
     // action wrappers
     using setparams_action = eosio::action_wrapper<"setparams"_n, &sx::swap::setparams>;
     using token_action = eosio::action_wrapper<"token"_n, &sx::swap::token>;
-    using swaplog_action = eosio::action_wrapper<"swaplog"_n, &sx::swap::swaplog>;
 
 private:
     // utils
