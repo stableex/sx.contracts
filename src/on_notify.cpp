@@ -54,7 +54,7 @@ void sx::swap::on_transfer( const name from, const name to, const asset quantity
     set_reserve( quantity.symbol.code() );
 
     // push log
-    if ( from != "network.sx"_n) {
+    if ( from != "network.sx"_n && is_account("stats.sx"_n) ) {
         sx::stats::swaplog_action swaplog( "stats.sx"_n, { get_self(), "active"_n });
         swaplog.send( get_self(), from, quantity, amount_out, fee );
     }

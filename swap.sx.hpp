@@ -166,7 +166,7 @@ public:
 
         // calculate out
         const int64_t out = uniswap::get_amount_out( amount_in.amount, virtual_reserve_in.amount, virtual_reserve_out.amount, fee );
-        if ( out < reserve_out.amount ) return { 0, reserve_out.symbol };
+        if ( reserve_out.amount < out ) return { 0, reserve_out.symbol };
         return { out, reserve_out.symbol };
     }
 
