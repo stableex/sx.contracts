@@ -154,12 +154,20 @@ public:
     static asset get_amount_out( const name contract, const asset amount_in, const symbol_code symcode_out )
     {
         sx::swap::settings _settings( contract, contract.value );
-        check(_settings.exists(), contract.to_string() + " settings are not initialized");
+        check( _settings.exists(), contract.to_string() + " settings are not initialized");
 
+        // settings
         const int64_t fee = _settings.get().fee;
-        const auto [ reserve_in, reserve_out ] = sx::swap::get_virtual_reserves( contract, amount_in.symbol.code(), symcode_out );
-        const uint64_t out = uniswap::get_amount_out( amount_in.amount, reserve_in.amount, reserve_out.amount, fee );
-        return { static_cast<int64_t>( out ), reserve_out.symbol };
+        const symbol_code symcode_in = amount_in.symbol.code();
+
+        // reserves
+        const auto [ virtual_reserve_in, virtual_reserve_out ] = sx::swap::get_virtual_reserves( contract, symcode_in, symcode_out );
+        const auto [ reserve_in, reserve_out ] = sx::swap::get_reserves( contract, symcode_in, symcode_out );
+
+        // calculate out
+        const int64_t out = uniswap::get_amount_out( amount_in.amount, virtual_reserve_in.amount, virtual_reserve_out.amount, fee );
+        if ( out < reserve_out.amount ) return { 0, reserve_out.symbol };
+        return { out, reserve_out.symbol };
     }
 
     /**
@@ -260,7 +268,7 @@ public:
      * // => true/false
      * ```
      */
-    static bool is_available(const name contract, const asset out )
+    static bool is_available( const name contract, const asset out )
     {
         // table
         sx::swap::tokens _tokens( contract, contract.value );
